@@ -1,0 +1,100 @@
+@startuml ClassDiagram
+
+skinparam classAttributeIconSize 0
+
+class SimulationEngine {
+    - clock: double
+    - eventQueue: PriorityQueue<Event>
+    + run(): void
+    + scheduleEvent(Event): void
+}
+
+class Customer {
+    - arrivalTime: double
+    - totalWaitTime: double
+    - assignedAdvisor: ServiceAdvisor
+    - ticket: RepairTicket
+}
+
+class ServiceAdvisor {
+    - advisorId: int
+    - isAvailable: boolean
+    - currentCustomer: Customer
+    + intakeCustomer(Customer): RepairTicket
+}
+
+class RepairTicket {
+    - ticketId: int
+    - jobType: String
+    - estimatedLaborTime: double
+    - requiredParts: List<Part>
+    - assignedTechnician: Technician
+    - status: TicketStatus
+    - queueDelay: double
+    - partsDelay: double
+}
+
+enum TicketStatus {
+    WAITING
+    IN_PROGRESS
+    BLOCKED
+    COMPLETE
+}
+
+class Technician {
+    - technicianId: int
+    - experienceLevel: int
+    - isAvailable: boolean
+    - currentTicket: RepairTicket
+    - assignedBay: RepairBay
+    + getServiceTime(): double
+}
+
+class RepairBay {
+    - bayId: int
+    - isOccupied: boolean
+    - assignedTechnician: Technician
+}
+
+class PartsInventory {
+    - partsList: List<Part>
+    + requestPart(Part): boolean
+    + reorder(Part): void
+}
+
+class Part {
+    - partId: int
+    - quantityOnHand: int
+    - reorderPoint: int
+    - reorderQty: int
+    - leadTime: double
+}
+
+class JobQueue {
+    - queue: LinkedList<RepairTicket>
+    + enqueue(RepairTicket): void
+    + dequeue(): RepairTicket
+}
+
+class MetricsCollector {
+    - avgWaitTime: double
+    - techUtilization: Map<Technician, Double>
+    - jobsCompletedPerDay: int
+    - partsDelays: List<Double>
+    + record(RepairTicket): void
+    + report(): void
+}
+
+SimulationEngine "1" *-- "1" JobQueue
+SimulationEngine "1" *-- "1" MetricsCollector
+SimulationEngine "1" *-- "1" PartsInventory
+Customer "1" --> "1" RepairTicket
+Customer "many" --> "1" ServiceAdvisor
+ServiceAdvisor "1" ..> "1" RepairTicket : creates
+RepairTicket "1" --> "many" Part
+RepairTicket "1" --> "1" TicketStatus
+Technician "1" --> "many" RepairBay
+Technician "1" ..> "1" JobQueue : pulls from
+PartsInventory "1" *-- "many" Part
+
+@enduml

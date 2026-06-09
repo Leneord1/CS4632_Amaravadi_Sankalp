@@ -1,0 +1,62 @@
+@startuml ActivityDiagram
+
+skinparam activityDiamondBackgroundColor White
+skinparam activityBackgroundColor White
+
+|Customer|
+start
+:Arrive (Poisson Process);
+
+|Service Advisor|
+repeat
+    :Check Advisor Availability;
+repeat while (Advisor Available?) is (no)
+->yes;
+:Intake Customer;
+:Assess Vehicle Condition;
+:Create Repair Ticket;
+
+|Job Queue|
+:Enqueue Repair Ticket;
+
+|Technician|
+repeat
+    :Check Technician Availability;
+repeat while (Technician Available?) is (no)
+->yes;
+:Assign Technician to Ticket;
+:Occupy Repair Bay;
+
+|Parts Department|
+if (Parts Available?) then (yes)
+else (no)
+    :Job Blocked\n(D_parts accumulates);
+    |Technician|
+    :Pull Next Ticket;
+    |Parts Department|
+    :Await Parts Fulfillment;
+endif
+
+|Technician|
+:Execute Repair\n(Experience-Based Service Time);
+:Release Bay;
+:Return to Job Queue;
+
+|Service Advisor|
+:Notify Customer;
+
+|Customer|
+:Depart;
+
+|MetricsCollector|
+:Record Metrics\n(W_total, Utilization, Throughput);
+
+if (More Events in Queue?) then (yes)
+    |Customer|
+    :Arrive (Poisson Process);
+else (no)
+    |MetricsCollector|
+    stop
+endif
+
+@enduml
