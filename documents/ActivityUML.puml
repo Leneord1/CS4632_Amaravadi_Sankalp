@@ -14,10 +14,10 @@ repeat while (Advisor Available?) is (no)
 ->yes;
 :Intake Customer;
 :Assess Vehicle Condition;
-:Create Repair Ticket;
+:Create Service Ticket;
 
 |Job Queue|
-:Enqueue Repair Ticket;
+:Enqueue Service Ticket;
 
 |Technician|
 repeat

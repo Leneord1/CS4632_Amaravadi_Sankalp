@@ -13,17 +13,17 @@ class Customer {
     - arrivalTime: double
     - totalWaitTime: double
     - assignedAdvisor: ServiceAdvisor
-    - ticket: RepairTicket
+    - ticket: ServiceTicket
 }
 
 class ServiceAdvisor {
     - advisorId: int
     - isAvailable: boolean
     - currentCustomer: Customer
-    + intakeCustomer(Customer): RepairTicket
+    + intakeCustomer(Customer): ServiceTicket
 }
 
-class RepairTicket {
+class ServiceTicket {
     - ticketId: int
     - jobType: String
     - estimatedLaborTime: double
@@ -45,7 +45,7 @@ class Technician {
     - technicianId: int
     - experienceLevel: int
     - isAvailable: boolean
-    - currentTicket: RepairTicket
+    - currentTicket: ServiceTicket
     - assignedBay: RepairBay
     + getServiceTime(): double
 }
@@ -71,9 +71,9 @@ class Part {
 }
 
 class JobQueue {
-    - queue: LinkedList<RepairTicket>
-    + enqueue(RepairTicket): void
-    + dequeue(): RepairTicket
+    - queue: LinkedList<ServiceTicket>
+    + enqueue(ServiceTicket): void
+    + dequeue(): ServiceTicket
 }
 
 class MetricsCollector {
@@ -81,18 +81,18 @@ class MetricsCollector {
     - techUtilization: Map<Technician, Double>
     - jobsCompletedPerDay: int
     - partsDelays: List<Double>
-    + record(RepairTicket): void
+    + record(ServiceTicket): void
     + report(): void
 }
 
 SimulationEngine "1" *-- "1" JobQueue
 SimulationEngine "1" *-- "1" MetricsCollector
 SimulationEngine "1" *-- "1" PartsInventory
-Customer "1" --> "1" RepairTicket
+Customer "1" --> "1" ServiceTicket
 Customer "many" --> "1" ServiceAdvisor
-ServiceAdvisor "1" ..> "1" RepairTicket : creates
-RepairTicket "1" --> "many" Part
-RepairTicket "1" --> "1" TicketStatus
+ServiceAdvisor "1" ..> "1" ServiceTicket : creates
+ServiceTicket "1" --> "many" Part
+ServiceTicket "1" --> "1" TicketStatus
 Technician "1" --> "many" RepairBay
 Technician "1" ..> "1" JobQueue : pulls from
 PartsInventory "1" *-- "many" Part
