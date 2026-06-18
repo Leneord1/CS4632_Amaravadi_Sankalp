@@ -1,9 +1,13 @@
 // Entry point for the service department simulator.
-// TODO: wire SimulationEngine, PartsInventory, and MetricsCollector.
+import java.util.logging.Logger;
+
 package simulator;
 
 public class Main {
+    Logger logger = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) {
-        System.out.println("Service Department Operational Optimization Simulator");
+        logger.info("Starting Service Department Simulator...");
+        ServiceDepartmentSimulator simulator = new ServiceDepartmentSimulator();
+        simulator.runSimulation();
     }
 }
