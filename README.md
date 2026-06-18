@@ -15,7 +15,7 @@ This project is designed to be a simulation of an automotive dealership service 
 ### Troubleshooting common issues
 ## Usage
 ### How to run the simulation
-### Command-line arguments or conguration
+### Command-line arguments or configuration
 ### Expected output/behavior
 ## Architecture Overview
 ### Brief description of main components
