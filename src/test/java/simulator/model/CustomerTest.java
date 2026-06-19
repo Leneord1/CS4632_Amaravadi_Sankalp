@@ -3,7 +3,7 @@ package simulator.model;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+// import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class CustomerTest {
@@ -25,7 +25,7 @@ class CustomerTest {
     void advisorAndTicketReferencesAreStored() {
         Customer customer = new Customer(2.0);
         ServiceAdvisor advisor = new ServiceAdvisor(2);
-        ServiceTicket ticket = new ServiceTicket(20, "Inspection", 1.0);
+        ServiceTicket ticket = new ServiceTicket(20, "Inspection", 1.0, 0.8);
         customer.setAssignedAdvisor(advisor);
         customer.setTicket(ticket);
 

@@ -1,18 +1,20 @@
 package simulator.model;
 
 public class ServiceTicket {
-    private int ticketId;
-    private String jobType;
-    private double estimatedLaborTime;
+    private final int ticketId;
+    private final String jobType;
+    private final double estimatedLaborTime;
+    private double actualLaborTime;
     private Technician assignedTechnician;
     private TicketStatus status;
     private double queueDelay;
     private double partsDelay;
 
-    public ServiceTicket(int ticketId, String jobType, double estimatedLaborTime) {
+    public ServiceTicket(int ticketId, String jobType, double estimatedLaborTime, double actualLaborTime) {
         this.ticketId = ticketId;
         this.jobType = jobType;
         this.estimatedLaborTime = estimatedLaborTime;
+        this.actualLaborTime = actualLaborTime;
         this.status = TicketStatus.WAITING;
         this.queueDelay = 0.0;
         this.partsDelay = 0.0;
@@ -60,5 +62,17 @@ public class ServiceTicket {
 
     public void setPartsDelay(double partsDelay) {
         this.partsDelay = partsDelay;
+    }
+
+    public double getActualLaborTime() {
+        return actualLaborTime;
+    }
+
+    public void setActualLaborTime(double actualLaborTime) {
+        this.actualLaborTime = actualLaborTime;
+    }
+
+    public double getLaborTimeVariance() {
+        return actualLaborTime - estimatedLaborTime;
     }
 }

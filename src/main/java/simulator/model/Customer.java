@@ -1,7 +1,7 @@
 package simulator.model;
 
 public class Customer {
-    private double arrivalTime;
+    private final double arrivalTime;
     private double totalWaitTime;
     private ServiceAdvisor assignedAdvisor;
     private ServiceTicket ticket;

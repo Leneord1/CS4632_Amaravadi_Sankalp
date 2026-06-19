@@ -1,7 +1,7 @@
 package simulator.model;
 
 public class RepairBay {
-    private int bayId;
+    private final int bayId;
     private boolean isOccupied;
     private Technician assignedTechnician;
 

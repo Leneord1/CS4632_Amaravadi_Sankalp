@@ -1,7 +1,8 @@
 package simulator.model;
 
+@SuppressWarnings("ALL")
 public class Technician {
-    private int technicianId;
+    private final int technicianId;
     private int experienceLevel;
     private boolean isAvailable;
     private ServiceTicket currentTicket;
@@ -19,7 +20,10 @@ public class Technician {
         }
 
         double experienceFactor = 1.0 - (experienceLevel * 0.05);
-        return currentTicket.getEstimatedLaborTime() * Math.max(experienceFactor, 0.5);
+        double baseLaborTime = currentTicket.getStatus() == TicketStatus.COMPLETE
+                ? currentTicket.getActualLaborTime()
+                : currentTicket.getEstimatedLaborTime();
+        return baseLaborTime * Math.max(experienceFactor, 0.5);
     }
 
     public int getTechnicianId() {

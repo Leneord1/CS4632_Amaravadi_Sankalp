@@ -13,10 +13,12 @@ class ServiceAdvisorTest {
         ServiceAdvisor advisor = new ServiceAdvisor(7);
         Customer customer = new Customer(9.5);
 
-        ServiceTicket ticket = advisor.intakeCustomer(customer, 101, "Diagnostics", 1.0);
+        ServiceTicket ticket = advisor.intakeCustomer(customer, 101, "Diagnostics", 1.0, 0.5);
 
         assertEquals(101, ticket.getTicketId());
         assertEquals("Diagnostics", ticket.getJobType());
+        assertEquals(0.5, ticket.getActualLaborTime());
+        assertEquals(-0.5, ticket.getLaborTimeVariance(), 1e-9);
         assertSame(advisor, customer.getAssignedAdvisor());
         assertSame(ticket, customer.getTicket());
         assertSame(customer, advisor.getCurrentCustomer());
@@ -26,7 +28,7 @@ class ServiceAdvisorTest {
     @Test
     void setAvailableRestoresAdvisorState() {
         ServiceAdvisor advisor = new ServiceAdvisor(1);
-        advisor.intakeCustomer(new Customer(1.0), 1, "Oil Change", 0.3);
+        advisor.intakeCustomer(new Customer(1.0), 1, "Oil Change", 0.3, 0.28);
         advisor.setAvailable(true);
         assertTrue(advisor.isAvailable());
     }

@@ -1,5 +1,6 @@
 package simulator.stochastic;
 
+import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,6 +29,16 @@ class PoissonDistributionTest {
     @Test
     void zeroArrivalsHasProbabilityOneWhenIntensityIsZero() {
         assertEquals(1.0, PoissonDistribution.probabilityExactlyNArrivals(0, 0.0), 1e-9);
+    }
+
+    @Test
+    void samplePoissonReturnsNonNegativeCount() {
+        assertTrue(PoissonDistribution.samplePoisson(new Random(21), 5.0) >= 0);
+    }
+
+    @Test
+    void sampleExponentialInterArrivalIsPositive() {
+        assertTrue(PoissonDistribution.sampleExponentialInterArrival(new Random(21), 2.0) > 0.0);
     }
 
     @Test

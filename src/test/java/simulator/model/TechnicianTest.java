@@ -11,7 +11,7 @@ class TechnicianTest {
     @Test
     void serviceTimeScalesWithExperience() {
         Technician technician = new Technician(4, 6);
-        technician.setCurrentTicket(new ServiceTicket(10, "Engine: Timing Cover Gasket R&R", 22.0));
+        technician.setCurrentTicket(new ServiceTicket(10, "Engine: Timing Cover Gasket R&R", 22.0, 20.8));
 
         assertEquals(15.4, technician.getServiceTime(), 1e-9);
     }
@@ -25,9 +25,19 @@ class TechnicianTest {
     @Test
     void serviceTimeDoesNotDropBelowHalfOfEstimate() {
         Technician technician = new Technician(2, 20);
-        technician.setCurrentTicket(new ServiceTicket(11, "Transmission: A/T R&R", 6.0));
+        technician.setCurrentTicket(new ServiceTicket(11, "Transmission: A/T R&R", 6.0, 6.8));
 
         assertEquals(3.0, technician.getServiceTime(), 1e-9);
+    }
+
+    @Test
+    void completedTicketUsesActualLaborTime() {
+        Technician technician = new Technician(4, 6);
+        ServiceTicket ticket = new ServiceTicket(12, "Engine: Timing Cover Gasket R&R", 22.0, 20.8);
+        ticket.setStatus(TicketStatus.COMPLETE);
+        technician.setCurrentTicket(ticket);
+
+        assertEquals(14.56, technician.getServiceTime(), 1e-9);
     }
 
     @Test

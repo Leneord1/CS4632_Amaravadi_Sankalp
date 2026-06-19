@@ -1,7 +1,7 @@
 package simulator.model;
 
 public class ServiceAdvisor {
-    private int advisorId;
+    private final int advisorId;
     private boolean isAvailable;
     private Customer currentCustomer;
 
@@ -10,12 +10,12 @@ public class ServiceAdvisor {
         this.isAvailable = true;
     }
 
-    public ServiceTicket intakeCustomer(Customer customer, int ticketId, String jobType, double estimatedLaborTime) {
+    public ServiceTicket intakeCustomer(Customer customer, int ticketId, String jobType, double estimatedLaborTime, double actualLaborTime) {
         currentCustomer = customer;
         isAvailable = false;
         customer.setAssignedAdvisor(this);
 
-        ServiceTicket ticket = new ServiceTicket(ticketId, jobType, estimatedLaborTime);
+        ServiceTicket ticket = new ServiceTicket(ticketId, jobType, estimatedLaborTime, actualLaborTime);
         customer.setTicket(ticket);
         return ticket;
     }

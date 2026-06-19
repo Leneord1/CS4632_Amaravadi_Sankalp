@@ -56,7 +56,7 @@ public class CoxProcess {
 
         double candidateTime = afterTimeHours;
         while (candidateTime < horizonEndHours) {
-            candidateTime += sampleExponentialInterArrival(lambdaMax);
+            candidateTime += PoissonDistribution.sampleExponentialInterArrival(random, lambdaMax);
             if (candidateTime >= horizonEndHours) {
                 return -1.0;
             }
@@ -91,7 +91,7 @@ public class CoxProcess {
         return arrivals;
     }
 
-    private double sampleExponentialInterArrival(double rate) {
-        return -Math.log(1.0 - random.nextDouble()) / rate;
+    public int sampleArrivalCount(double startTimeHours, double endTimeHours) {
+        return PoissonDistribution.samplePoisson(random, integratedIntensity(startTimeHours, endTimeHours));
     }
 }

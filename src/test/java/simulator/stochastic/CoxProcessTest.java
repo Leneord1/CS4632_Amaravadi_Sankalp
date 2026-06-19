@@ -33,7 +33,7 @@ class CoxProcessTest {
         CoxProcess process = new CoxProcess(time -> 6.0, new Random(42), 1.0);
         List<Customer> arrivals = process.generateArrivals(0.0, 5.0, 20);
 
-        assertTrue(arrivals.size() > 0);
+        assertTrue(!arrivals.isEmpty());
         for (Customer customer : arrivals) {
             assertTrue(customer.getArrivalTime() >= 0.0);
             assertTrue(customer.getArrivalTime() < 5.0);
@@ -57,6 +57,19 @@ class CoxProcessTest {
     void sampleNextArrivalReturnsNegativeForZeroRate() {
         CoxProcess process = new CoxProcess(time -> 0.0, new Random(1), 1.0);
         assertEquals(-1.0, process.sampleNextArrivalTime(0.0, 5.0));
+    }
+
+    @Test
+    void stationaryProbabilityUsesEquationFive() {
+        CoxProcess process = new CoxProcess(time -> 4.0, new Random(1), 1.0);
+        double expected = PoissonDistribution.probabilityExactlyNArrivals(1, 4.0, 0.5);
+        assertEquals(expected, process.probabilityExactlyNArrivalsStationary(1, 4.0, 0.5), 1e-9);
+    }
+
+    @Test
+    void sampleArrivalCountReturnsNonNegativeValue() {
+        CoxProcess process = new CoxProcess(time -> 3.0, new Random(99), 1.0);
+        assertTrue(process.sampleArrivalCount(0.0, 2.0) >= 0);
     }
 
     @Test

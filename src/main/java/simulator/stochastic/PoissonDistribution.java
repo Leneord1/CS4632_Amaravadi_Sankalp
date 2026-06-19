@@ -1,5 +1,7 @@
 package simulator.stochastic;
 
+import java.util.Random;
+
 public final class PoissonDistribution {
     private PoissonDistribution() {
     }
@@ -23,31 +25,32 @@ public final class PoissonDistribution {
                 / factorial(n);
     }
 
+    public static double sampleExponentialInterArrival(Random random, double lambda) {
+        if (lambda <= 0.0) {
+            throw new IllegalArgumentException("Lambda must be positive");
+        }
+        return -Math.log(1.0 - random.nextDouble()) / lambda;
+    }
+
+    public static int samplePoisson(Random random, double lambda) {
+        if (lambda < 0.0) {
+            throw new IllegalArgumentException("Lambda must be non-negative");
+        }
+        double threshold = Math.exp(-lambda);
+        int count = 0;
+        double product = 1.0;
+        do {
+            count++;
+            product *= random.nextDouble();
+        } while (product > threshold);
+        return count - 1;
+    }
+
     private static double factorial(int n) {
         double product = 1.0;
         for (int i = 2; i <= n; i++) {
             product *= i;
         }
         return product;
-    }
-    private static double sampleExponentialInterArrival(double lambda) {
-        if (lambda <= 0.0) {
-            throw new IllegalArgumentException("Lambda must be positive");
-        }
-        return -Math.log(1.0 - Math.random()) / lambda;
-    }
-
-    private static double samplePoisson(double lambda) {
-        if (lambda < 0.0) {
-            throw new IllegalArgumentException("Lambda must be non-negative");
-        }
-        double L = Math.exp(-lambda);
-        int k = 0;
-        double p = 1.0;
-        do {
-            k++;
-            p *= Math.random();
-        } while (p > L);
-        return k - 1;
     }
 }
