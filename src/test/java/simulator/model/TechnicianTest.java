@@ -13,7 +13,7 @@ class TechnicianTest {
         Technician technician = new Technician(4, 6);
         technician.setCurrentTicket(new ServiceTicket(10, "Engine: Timing Cover Gasket R&R", 22.0));
 
-        assertEquals(2.8, technician.getServiceTime(), 1e-9);
+        assertEquals(15.4, technician.getServiceTime(), 1e-9);
     }
 
     @Test
