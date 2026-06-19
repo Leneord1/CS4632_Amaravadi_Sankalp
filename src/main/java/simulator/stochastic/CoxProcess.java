@@ -1,0 +1,99 @@
+// Cox (doubly stochastic Poisson) arrival process per CS4632 M1 Section IV.B.
+// Implements Eq. (5) P(N(t)=n), time-varying lambda(t), and thinning for DES arrivals.
+package simulator.stochastic;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.logging.Logger;
+import simulator.model.Customer;
+
+public class CoxProcess {
+    private static final Logger LOGGER = Logger.getLogger(CoxProcess.class.getName());
+
+    private final ArrivalRateFunction rateFunction;
+    private final Random random;
+    private final double stochasticIntensityMultiplier;
+
+    public CoxProcess(ArrivalRateFunction rateFunction) {
+        this(rateFunction, new Random(), 1.0);
+    }
+
+    public CoxProcess(ArrivalRateFunction rateFunction, Random random, double stochasticIntensityMultiplier) {
+        this.rateFunction = rateFunction;
+        this.random = random;
+        this.stochasticIntensityMultiplier = stochasticIntensityMultiplier;
+    }
+
+    public static CoxProcess defaultDealershipProcess() {
+        return new CoxProcess(PiecewiseConstantArrivalRate.defaultDealershipDay());
+    }
+
+    public double arrivalRateAt(double timeHours) {
+        return rateFunction.rateAt(timeHours) * stochasticIntensityMultiplier;
+    }
+
+    public double integratedIntensity(double startTimeHours, double endTimeHours) {
+        return rateFunction.integratedRate(startTimeHours, endTimeHours) * stochasticIntensityMultiplier;
+    }
+
+    public double probabilityExactlyNArrivals(int n, double startTimeHours, double endTimeHours) {
+        double integratedLambda = integratedIntensity(startTimeHours, endTimeHours);
+        return PoissonDistribution.probabilityExactlyNArrivals(n, integratedLambda);
+    }
+
+    public double probabilityExactlyNArrivalsStationary(int n, double lambda, double timeHours) {
+        return PoissonDistribution.probabilityExactlyNArrivals(n, lambda, timeHours);
+    }
+
+    public double sampleNextArrivalTime(double afterTimeHours, double horizonEndHours) {
+        if (afterTimeHours >= horizonEndHours) {
+            return -1.0;
+        }
+
+        double lambdaMax = rateFunction.maxRate(afterTimeHours, horizonEndHours) * stochasticIntensityMultiplier;
+        if (lambdaMax <= 0.0) {
+            return -1.0;
+        }
+
+        double candidateTime = afterTimeHours;
+        while (candidateTime < horizonEndHours) {
+            candidateTime += sampleExponentialInterArrival(lambdaMax);
+            if (candidateTime >= horizonEndHours) {
+                return -1.0;
+            }
+
+            double acceptanceProbability = arrivalRateAt(candidateTime) / lambdaMax;
+            if (random.nextDouble() < acceptanceProbability) {
+                return candidateTime;
+            }
+        }
+
+        return -1.0;
+    }
+
+    public List<Customer> generateArrivals(double startTimeHours, double endTimeHours, int maxArrivals) {
+        List<Customer> arrivals = new ArrayList<>();
+        double nextTime = startTimeHours;
+
+        while (arrivals.size() < maxArrivals) {
+            nextTime = sampleNextArrivalTime(nextTime, endTimeHours);
+            if (nextTime < 0.0) {
+                break;
+            }
+
+            Customer customer = new Customer(nextTime);
+            arrivals.add(customer);
+            LOGGER.fine(String.format(
+                    "Cox arrival at t=%.3f h (lambda=%.3f vehicles/h)",
+                    nextTime,
+                    arrivalRateAt(nextTime)));
+        }
+
+        return arrivals;
+    }
+
+    private double sampleExponentialInterArrival(double rate) {
+        return -Math.log(1.0 - random.nextDouble()) / rate;
+    }
+}
