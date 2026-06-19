@@ -1,5 +1,3 @@
-// Cox (doubly stochastic Poisson) arrival process per CS4632 M1 Section IV.B.
-// Implements Eq. (5) P(N(t)=n), time-varying lambda(t), and thinning for DES arrivals.
 package simulator.stochastic;
 
 import java.util.ArrayList;

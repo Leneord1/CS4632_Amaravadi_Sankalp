@@ -1,4 +1,3 @@
-// Poisson probability mass function from CS4632 M1 Eq. (5): P(N(t)=n) = (lambda*t)^n * e^(-lambda*t) / n!
 package simulator.stochastic;
 
 public final class PoissonDistribution {
