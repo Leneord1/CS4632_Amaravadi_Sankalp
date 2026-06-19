@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PoissonDistributionTest {
     @Test
@@ -32,13 +31,16 @@ class PoissonDistributionTest {
     }
 
     @Test
-    void samplePoissonReturnsNonNegativeCount() {
-        assertTrue(PoissonDistribution.samplePoisson(new Random(21), 5.0) >= 0);
+    void samplePoissonUsesSeededRandom() {
+        assertEquals(6, PoissonDistribution.samplePoisson(new Random(21), 5.0));
     }
 
     @Test
-    void sampleExponentialInterArrivalIsPositive() {
-        assertTrue(PoissonDistribution.sampleExponentialInterArrival(new Random(21), 2.0) > 0.0);
+    void sampleExponentialInterArrivalUsesSeededRandom() {
+        assertEquals(
+                0.658296818935262,
+                PoissonDistribution.sampleExponentialInterArrival(new Random(21), 2.0),
+                1e-12);
     }
 
     @Test

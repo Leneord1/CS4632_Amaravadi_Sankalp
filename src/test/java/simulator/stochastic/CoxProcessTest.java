@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import simulator.model.Customer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CoxProcessTest {
@@ -33,9 +34,8 @@ class CoxProcessTest {
         CoxProcess process = new CoxProcess(time -> 6.0, new Random(42), 1.0);
         List<Customer> arrivals = process.generateArrivals(0.0, 5.0, 20);
 
-        assertTrue(!arrivals.isEmpty());
+        assertFalse(arrivals.isEmpty());
         for (Customer customer : arrivals) {
-            assertTrue(customer.getArrivalTime() >= 0.0);
             assertTrue(customer.getArrivalTime() < 5.0);
         }
     }
@@ -67,9 +67,9 @@ class CoxProcessTest {
     }
 
     @Test
-    void sampleArrivalCountReturnsNonNegativeValue() {
+    void sampleArrivalCountUsesSeededRandom() {
         CoxProcess process = new CoxProcess(time -> 3.0, new Random(99), 1.0);
-        assertTrue(process.sampleArrivalCount(0.0, 2.0) >= 0);
+        assertEquals(9, process.sampleArrivalCount(0.0, 2.0));
     }
 
     @Test

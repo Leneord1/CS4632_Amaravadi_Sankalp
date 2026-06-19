@@ -4,7 +4,7 @@ public class ServiceTicket {
     private final int ticketId;
     private final String jobType;
     private final double estimatedLaborTime;
-    private double actualLaborTime;
+    private final double actualLaborTime;
     private Technician assignedTechnician;
     private TicketStatus status;
     private double queueDelay;
@@ -66,10 +66,6 @@ public class ServiceTicket {
 
     public double getActualLaborTime() {
         return actualLaborTime;
-    }
-
-    public void setActualLaborTime(double actualLaborTime) {
-        this.actualLaborTime = actualLaborTime;
     }
 
     public double getLaborTimeVariance() {

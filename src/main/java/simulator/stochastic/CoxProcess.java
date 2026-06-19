@@ -3,6 +3,7 @@ package simulator.stochastic;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import simulator.model.Customer;
 
@@ -55,7 +56,7 @@ public class CoxProcess {
         }
 
         double candidateTime = afterTimeHours;
-        while (candidateTime < horizonEndHours) {
+        while (true) {
             candidateTime += PoissonDistribution.sampleExponentialInterArrival(random, lambdaMax);
             if (candidateTime >= horizonEndHours) {
                 return -1.0;
@@ -66,8 +67,6 @@ public class CoxProcess {
                 return candidateTime;
             }
         }
-
-        return -1.0;
     }
 
     public List<Customer> generateArrivals(double startTimeHours, double endTimeHours, int maxArrivals) {
@@ -82,10 +81,12 @@ public class CoxProcess {
 
             Customer customer = new Customer(nextTime);
             arrivals.add(customer);
-            LOGGER.fine(String.format(
-                    "Cox arrival at t=%.3f h (lambda=%.3f vehicles/h)",
-                    nextTime,
-                    arrivalRateAt(nextTime)));
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format(
+                        "Cox arrival at t=%.3f h (lambda=%.3f vehicles/h)",
+                        nextTime,
+                        arrivalRateAt(nextTime)));
+            }
         }
 
         return arrivals;
