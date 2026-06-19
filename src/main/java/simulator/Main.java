@@ -1,13 +1,11 @@
-// Entry point for the service department simulator.
-import java.util.logging.Logger;
-
 package simulator;
 
+import java.util.logging.Logger;
+
 public class Main {
-    Logger logger = Logger.getLogger(Main.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) {
-        logger.info("Starting Service Department Simulator...");
-        ServiceDepartmentSimulator simulator = new ServiceDepartmentSimulator();
-        simulator.runSimulation();
+        LOGGER.info("Service Department Operational Optimization Simulator");
     }
 }
