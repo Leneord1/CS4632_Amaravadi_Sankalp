@@ -7,6 +7,8 @@ public class ThroughputMetrics {
     private int recordedJobs;
 
     public void recordJobCompletion(ServiceTicket ticket) {
+        recordedJobs++;
+        jobsCompletedPerDay = recordedJobs;
     }
 
     public int getJobsCompletedPerDay() {

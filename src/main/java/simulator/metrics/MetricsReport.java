@@ -2,14 +2,24 @@ package simulator.metrics;
 
 import java.util.Collections;
 import java.util.Map;
+import simulator.model.RepairBay;
 import simulator.model.Technician;
 
 public class MetricsReport {
     private double averageCustomerWaitTime;
+    private double averageAdvisorWaitTime;
+    private double averageQueueDelay;
     private double averagePartsDelay;
+    private double averageServiceTime;
+    private double averageTotalJobDelay;
+    private double analyticalQueueWait;
+    private double analyticalSystemUtilization;
+    private double simulatedShopTechnicianUtilization;
+    private double simulatedShopBayUtilization;
     private int jobsCompletedPerDay;
     private Map<Technician, Double> technicianUtilization;
     private Map<Technician, Integer> jobsCompletedByTechnician;
+    private Map<RepairBay, Double> bayUtilization;
 
     public double getAverageCustomerWaitTime() {
         return averageCustomerWaitTime;
@@ -19,12 +29,76 @@ public class MetricsReport {
         this.averageCustomerWaitTime = averageCustomerWaitTime;
     }
 
+    public double getAverageAdvisorWaitTime() {
+        return averageAdvisorWaitTime;
+    }
+
+    public void setAverageAdvisorWaitTime(double averageAdvisorWaitTime) {
+        this.averageAdvisorWaitTime = averageAdvisorWaitTime;
+    }
+
+    public double getAverageQueueDelay() {
+        return averageQueueDelay;
+    }
+
+    public void setAverageQueueDelay(double averageQueueDelay) {
+        this.averageQueueDelay = averageQueueDelay;
+    }
+
     public double getAveragePartsDelay() {
         return averagePartsDelay;
     }
 
     public void setAveragePartsDelay(double averagePartsDelay) {
         this.averagePartsDelay = averagePartsDelay;
+    }
+
+    public double getAverageServiceTime() {
+        return averageServiceTime;
+    }
+
+    public void setAverageServiceTime(double averageServiceTime) {
+        this.averageServiceTime = averageServiceTime;
+    }
+
+    public double getAverageTotalJobDelay() {
+        return averageTotalJobDelay;
+    }
+
+    public void setAverageTotalJobDelay(double averageTotalJobDelay) {
+        this.averageTotalJobDelay = averageTotalJobDelay;
+    }
+
+    public double getAnalyticalQueueWait() {
+        return analyticalQueueWait;
+    }
+
+    public void setAnalyticalQueueWait(double analyticalQueueWait) {
+        this.analyticalQueueWait = analyticalQueueWait;
+    }
+
+    public double getAnalyticalSystemUtilization() {
+        return analyticalSystemUtilization;
+    }
+
+    public void setAnalyticalSystemUtilization(double analyticalSystemUtilization) {
+        this.analyticalSystemUtilization = analyticalSystemUtilization;
+    }
+
+    public double getSimulatedShopTechnicianUtilization() {
+        return simulatedShopTechnicianUtilization;
+    }
+
+    public void setSimulatedShopTechnicianUtilization(double simulatedShopTechnicianUtilization) {
+        this.simulatedShopTechnicianUtilization = simulatedShopTechnicianUtilization;
+    }
+
+    public double getSimulatedShopBayUtilization() {
+        return simulatedShopBayUtilization;
+    }
+
+    public void setSimulatedShopBayUtilization(double simulatedShopBayUtilization) {
+        this.simulatedShopBayUtilization = simulatedShopBayUtilization;
     }
 
     public int getJobsCompletedPerDay() {
@@ -53,5 +127,13 @@ public class MetricsReport {
 
     public void setJobsCompletedByTechnician(Map<Technician, Integer> jobsCompletedByTechnician) {
         this.jobsCompletedByTechnician = jobsCompletedByTechnician;
+    }
+
+    public Map<RepairBay, Double> getBayUtilization() {
+        return bayUtilization == null ? Collections.emptyMap() : Collections.unmodifiableMap(bayUtilization);
+    }
+
+    public void setBayUtilization(Map<RepairBay, Double> bayUtilization) {
+        this.bayUtilization = bayUtilization;
     }
 }
