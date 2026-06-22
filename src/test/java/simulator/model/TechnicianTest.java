@@ -1,6 +1,8 @@
 package simulator.model;
 
 import org.junit.jupiter.api.Test;
+import simulator.config.ServiceTimeModel;
+import simulator.config.SimulationConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -60,5 +62,18 @@ class TechnicianTest {
         Technician technician = new Technician(8, 2);
         technician.setAvailable(false);
         assertFalse(technician.isAvailable());
+    }
+
+    @Test
+    void pdfServiceTimeUsesConfiguredAlpha() {
+        SimulationConfig config = SimulationConfig.builder()
+                .experienceAlpha(1.0)
+                .maxExperienceLevel(10)
+                .serviceTimeModel(ServiceTimeModel.PDF)
+                .build();
+        Technician technician = new Technician(4, 10, config);
+        technician.setCurrentTicket(new ServiceTicket(13, "Brakes", 2.0, 2.0));
+
+        assertEquals(1.0, technician.getServiceTime(), 1e-9);
     }
 }

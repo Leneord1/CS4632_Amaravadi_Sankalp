@@ -20,6 +20,7 @@ public class MetricsReport {
     private Map<Technician, Double> technicianUtilization;
     private Map<Technician, Integer> jobsCompletedByTechnician;
     private Map<RepairBay, Double> bayUtilization;
+    private ValidationReport validationReport;
 
     public double getAverageCustomerWaitTime() {
         return averageCustomerWaitTime;
@@ -135,5 +136,13 @@ public class MetricsReport {
 
     public void setBayUtilization(Map<RepairBay, Double> bayUtilization) {
         this.bayUtilization = bayUtilization;
+    }
+
+    public ValidationReport getValidationReport() {
+        return validationReport;
+    }
+
+    public void setValidationReport(ValidationReport validationReport) {
+        this.validationReport = validationReport;
     }
 }

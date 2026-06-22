@@ -9,6 +9,7 @@ import simulator.model.RepairBay;
 import simulator.model.ServiceTicket;
 import simulator.model.Technician;
 import simulator.model.TicketStatus;
+import simulator.config.SimulationConfig;
 
 public class MetricsCollector {
     private static final Logger LOGGER = Logger.getLogger(MetricsCollector.class.getName());
@@ -20,6 +21,7 @@ public class MetricsCollector {
     private double arrivalRate;
     private int technicianCount;
     private double serviceRatePerTechnician;
+    private double validationRelativeTolerance;
 
     private final CustomerWaitMetrics customerWaitMetrics = new CustomerWaitMetrics();
     private final TechnicianUtilizationMetrics technicianUtilizationMetrics = new TechnicianUtilizationMetrics();
@@ -27,18 +29,30 @@ public class MetricsCollector {
     private final PartsDelayMetrics partsDelayMetrics = new PartsDelayMetrics();
     private final ThroughputMetrics throughputMetrics = new ThroughputMetrics();
     private final QueueBenchmarkMetrics queueBenchmarkMetrics = new QueueBenchmarkMetrics();
+    private final SimulationValidationMetrics simulationValidationMetrics = new SimulationValidationMetrics();
+
+    public void configureSimulation(SimulationConfig config) {
+        this.simulationHorizonHours = config.getSimulationHorizonHours();
+        this.arrivalRate = config.getArrivalRate();
+        this.technicianCount = config.getTechnicianCount();
+        this.serviceRatePerTechnician = config.getServiceRatePerTechnician();
+        this.validationRelativeTolerance = config.getValidationRelativeTolerance();
+        technicianUtilizationMetrics.setSimulationHorizonHours(simulationHorizonHours);
+        bayUtilizationMetrics.setSimulationHorizonHours(simulationHorizonHours);
+    }
 
     public void configureSimulation(
             double simulationHorizonHours,
             double arrivalRate,
             int technicianCount,
             double serviceRatePerTechnician) {
-        this.simulationHorizonHours = simulationHorizonHours;
-        this.arrivalRate = arrivalRate;
-        this.technicianCount = technicianCount;
-        this.serviceRatePerTechnician = serviceRatePerTechnician;
-        technicianUtilizationMetrics.setSimulationHorizonHours(simulationHorizonHours);
-        bayUtilizationMetrics.setSimulationHorizonHours(simulationHorizonHours);
+        configureSimulation(
+                SimulationConfig.builder()
+                        .simulationHorizonHours(simulationHorizonHours)
+                        .arrivalRate(arrivalRate)
+                        .technicianCount(technicianCount)
+                        .serviceRatePerTechnician(serviceRatePerTechnician)
+                        .build());
     }
 
     public void record(ServiceTicket ticket) {
@@ -100,6 +114,15 @@ public class MetricsCollector {
                         arrivalRate,
                         technicianCount,
                         serviceRatePerTechnician));
+        report.setValidationReport(
+                simulationValidationMetrics.validateAgainstQueueBenchmark(
+                        report,
+                        arrivalRate,
+                        technicianCount,
+                        serviceRatePerTechnician,
+                        customerWaitMetrics.getAverageAdvisorWaitTime(),
+                        customerWaitMetrics.getAverageServiceTime(),
+                        validationRelativeTolerance));
         return report;
     }
 
@@ -122,6 +145,14 @@ public class MetricsCollector {
                 metricsReport.getSimulatedShopBayUtilization(),
                 metricsReport.getAnalyticalSystemUtilization()));
         LOGGER.info(String.format("Analytical queue wait Wq=%.3f h", metricsReport.getAnalyticalQueueWait()));
+        ValidationReport validationReport = metricsReport.getValidationReport();
+        if (validationReport != null) {
+            LOGGER.info(String.format(
+                    "Validation rho error=%.3f Wq error=%.3f overall=%s",
+                    validationReport.getUtilizationRelativeError(),
+                    validationReport.getQueueWaitRelativeError(),
+                    validationReport.isOverallValid() ? "PASS" : "PENDING"));
+        }
     }
 
     public double getAvgWaitTime() {
@@ -160,11 +191,25 @@ public class MetricsCollector {
         return queueBenchmarkMetrics;
     }
 
+    public SimulationValidationMetrics getSimulationValidationMetrics() {
+        return simulationValidationMetrics;
+    }
+
     public double getSimulationHorizonHours() {
         return simulationHorizonHours;
     }
 
     public void setSimulationHorizonHours(double simulationHorizonHours) {
         this.simulationHorizonHours = simulationHorizonHours;
+    }
+
+    public SimulationConfig getSimulationConfig() {
+        return SimulationConfig.builder()
+                .simulationHorizonHours(simulationHorizonHours)
+                .arrivalRate(arrivalRate)
+                .technicianCount(technicianCount)
+                .serviceRatePerTechnician(serviceRatePerTechnician)
+                .validationRelativeTolerance(validationRelativeTolerance)
+                .build();
     }
 }

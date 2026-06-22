@@ -13,6 +13,12 @@ class QueueBenchmarkMetricsTest {
     }
 
     @Test
+    void matchesPdfScenarioQueueWait() {
+        QueueBenchmarkMetrics metrics = new QueueBenchmarkMetrics();
+        assertEquals(2.0 / 9.0, metrics.calculateExpectedQueueWait(4.0, 3, 2.0), 1e-3);
+    }
+
+    @Test
     void expectedQueueWaitIsPositiveForStableSystem() {
         QueueBenchmarkMetrics metrics = new QueueBenchmarkMetrics();
         assertTrue(metrics.calculateExpectedQueueWait(4.0, 3, 2.0) > 0.0);

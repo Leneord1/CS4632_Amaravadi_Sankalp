@@ -11,6 +11,16 @@ class MetricsEquationsTest {
     }
 
     @Test
+    void erlangCProbabilityMatchesEquationTwo() {
+        assertEquals(4.0 / 9.0, MetricsEquations.erlangCProbabilityOfWaiting(4.0, 3, 2.0), 1e-3);
+    }
+
+    @Test
+    void expectedQueueWaitMatchesEquationFour() {
+        assertEquals(2.0 / 9.0, MetricsEquations.expectedQueueWait(4.0, 3, 2.0), 1e-3);
+    }
+
+    @Test
     void totalCustomerWaitMatchesEquationTwelve() {
         assertEquals(6.5, MetricsEquations.totalCustomerWaitTime(1.0, 2.0, 1.5, 2.0), 1e-9);
     }
