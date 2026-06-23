@@ -27,11 +27,17 @@ class ServiceTicket {
     - ticketId: int
     - jobType: String
     - estimatedLaborTime: double
-    - requiredParts: List<Part>
+    - requiredParts: List<PartRequirement>
     - assignedTechnician: Technician
     - status: TicketStatus
     - queueDelay: double
     - partsDelay: double
+    + addRequiredPart(int, int): void
+}
+
+class PartRequirement {
+    - partId: int
+    - quantity: int
 }
 
 enum TicketStatus {
@@ -56,18 +62,49 @@ class RepairBay {
     - assignedTechnician: Technician
 }
 
+class PartsDepartment {
+    - inventory: PartsInventory
+    - pendingOrders: List<PendingPartOrder>
+    - blockedTickets: List<ServiceTicket>
+    - averageFulfillmentTimeHours: double
+    + requestPartsForTicket(ServiceTicket, double): PartsFulfillmentResult
+    + processPendingOrders(double): List<ServiceTicket>
+    + getAverageFulfillmentTimeHours(): double
+}
+
 class PartsInventory {
-    - partsList: List<Part>
-    + requestPart(Part): boolean
-    + reorder(Part): void
+    - partsById: Map<Integer, Part>
+    + addPart(Part): void
+    + requestPart(int, int): boolean
+    + fulfillRequirements(Iterable<PartRequirement>): boolean
+    + shouldReorder(Part): boolean
 }
 
 class Part {
     - partId: int
+    - description: String
     - quantityOnHand: int
     - reorderPoint: int
-    - reorderQty: int
-    - leadTime: double
+    - reorderQuantity: int
+    - meanLeadTimeHours: double
+}
+
+class PendingPartOrder {
+    - orderId: int
+    - partId: int
+    - quantity: int
+    - orderTimeHours: double
+    - arrivalTimeHours: double
+}
+
+class PartsFulfillmentResult {
+    - status: PartsFulfillmentStatus
+    - partsDelayHours: double
+}
+
+enum PartsFulfillmentStatus {
+    FULFILLED
+    BLOCKED
 }
 
 class JobQueue {
@@ -87,14 +124,19 @@ class MetricsCollector {
 
 SimulationEngine "1" *-- "1" JobQueue
 SimulationEngine "1" *-- "1" MetricsCollector
-SimulationEngine "1" *-- "1" PartsInventory
+SimulationEngine "1" *-- "1" PartsDepartment
+PartsDepartment "1" *-- "1" PartsInventory
+PartsDepartment "1" o-- "many" PendingPartOrder
+PartsDepartment "many" ..> "many" ServiceTicket : blocks / releases
 Customer "1" --> "1" ServiceTicket
 Customer "many" --> "1" ServiceAdvisor
 ServiceAdvisor "1" ..> "1" ServiceTicket : creates
-ServiceTicket "1" --> "many" Part
+ServiceTicket "1" *-- "many" PartRequirement
+PartRequirement "many" --> "1" Part
 ServiceTicket "1" --> "1" TicketStatus
-Technician "1" --> "many" RepairBay
+Technician "1" --> "1" RepairBay
 Technician "1" ..> "1" JobQueue : pulls from
+Technician "1" ..> "1" PartsDepartment : requests parts
 PartsInventory "1" *-- "many" Part
 
 @enduml

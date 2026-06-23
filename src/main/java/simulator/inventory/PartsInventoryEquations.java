@@ -1,5 +1,8 @@
 package simulator.inventory;
 
+import java.util.Random;
+import simulator.stochastic.PoissonDistribution;
+
 public final class PartsInventoryEquations {
     private PartsInventoryEquations() {
     }
@@ -39,5 +42,12 @@ public final class PartsInventoryEquations {
             total += leadTime;
         }
         return total / observedLeadTimesHours.length;
+    }
+
+    public static double sampleLeadTimeHours(Random random, double meanLeadTimeHours) {
+        if (meanLeadTimeHours <= 0.0) {
+            return 0.0;
+        }
+        return PoissonDistribution.sampleExponentialInterArrival(random, 1.0 / meanLeadTimeHours);
     }
 }

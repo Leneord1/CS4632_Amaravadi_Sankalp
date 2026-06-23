@@ -1,10 +1,15 @@
 package simulator.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class ServiceTicket {
     private final int ticketId;
     private final String jobType;
     private final double estimatedLaborTime;
     private final double actualLaborTime;
+    private final List<PartRequirement> requiredParts = new ArrayList<>();
     private Technician assignedTechnician;
     private TicketStatus status;
     private double queueDelay;
@@ -70,5 +75,13 @@ public class ServiceTicket {
 
     public double getLaborTimeVariance() {
         return actualLaborTime - estimatedLaborTime;
+    }
+
+    public void addRequiredPart(int partId, int quantity) {
+        requiredParts.add(new PartRequirement(partId, quantity));
+    }
+
+    public List<PartRequirement> getRequiredParts() {
+        return Collections.unmodifiableList(requiredParts);
     }
 }
