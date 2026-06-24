@@ -8,9 +8,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
+import java.util.function.IntConsumer;
+import java.util.function.LongConsumer;
 
 public final class SimulationConfigLoader {
     private static final String DEFAULT_PROPERTIES_RESOURCE = "simulation.properties";
+    private static final String CONFIG_ARG_PREFIX = "--config=";
 
     private SimulationConfigLoader() {
     }
@@ -66,7 +70,7 @@ public final class SimulationConfigLoader {
 
     private static Properties loadProperties(String[] args) {
         Properties properties = new Properties();
-        loadResourceProperties(properties, DEFAULT_PROPERTIES_RESOURCE);
+        loadResourceProperties(properties);
 
         String configPath = readConfigPath(args);
         if (configPath != null) {
@@ -75,13 +79,13 @@ public final class SimulationConfigLoader {
         return properties;
     }
 
-    private static void loadResourceProperties(Properties properties, String resourceName) {
-        try (InputStream inputStream = SimulationConfigLoader.class.getClassLoader().getResourceAsStream(resourceName)) {
+    private static void loadResourceProperties(Properties properties) {
+        try (InputStream inputStream = SimulationConfigLoader.class.getClassLoader().getResourceAsStream(SimulationConfigLoader.DEFAULT_PROPERTIES_RESOURCE)) {
             if (inputStream != null) {
                 properties.load(inputStream);
             }
         } catch (IOException exception) {
-            throw new IllegalStateException("Failed to load " + resourceName, exception);
+            throw new IllegalStateException("Failed to load " + SimulationConfigLoader.DEFAULT_PROPERTIES_RESOURCE, exception);
         }
     }
 
@@ -99,8 +103,8 @@ public final class SimulationConfigLoader {
 
     private static String readConfigPath(String[] args) {
         for (String arg : args) {
-            if (arg.startsWith("--config=")) {
-                return arg.substring("--config=".length());
+            if (arg.startsWith(CONFIG_ARG_PREFIX)) {
+                return arg.substring(CONFIG_ARG_PREFIX.length());
             }
         }
         return null;
@@ -115,14 +119,14 @@ public final class SimulationConfigLoader {
         applyDoubleProperty(properties, "serviceTime.experienceAlpha", builder::experienceAlpha);
         applyIntProperty(properties, "serviceTime.maxExperienceLevel", builder::maxExperienceLevel);
         applyDoubleProperty(properties, "serviceTime.gammaShapeParameter", builder::gammaShapeParameter);
-        applyEnumProperty(properties, "serviceTime.model", builder::serviceTimeModel);
+        applyEnumProperty(properties, builder::serviceTimeModel);
         applyIntProperty(properties, "parts.reorderPoint", builder::partsReorderPoint);
         applyIntProperty(properties, "parts.reorderQuantity", builder::partsReorderQuantity);
         applyDoubleProperty(properties, "parts.leadTimeHours", builder::partsLeadTimeHours);
         applyIntProperty(properties, "parts.initialQuantityOnHand", builder::initialPartsQuantityOnHand);
         applyDoubleProperty(properties, "validation.relativeTolerance", builder::validationRelativeTolerance);
         applyIntProperty(properties, "simulation.replicationCount", builder::replicationCount);
-        applyLongProperty(properties, "simulation.randomSeed", builder::randomSeed);
+        applyLongProperty(properties, builder::randomSeed);
     }
 
     private static void applyCliOverrides(SimulationConfig.Builder builder, String[] args) {
@@ -135,20 +139,20 @@ public final class SimulationConfigLoader {
         applyCliDouble(options, "experience-alpha", builder::experienceAlpha);
         applyCliInt(options, "max-experience", builder::maxExperienceLevel);
         applyCliDouble(options, "gamma-shape", builder::gammaShapeParameter);
-        applyCliEnum(options, "service-time-model", builder::serviceTimeModel);
+        applyCliEnum(options, builder::serviceTimeModel);
         applyCliInt(options, "reorder-point", builder::partsReorderPoint);
         applyCliInt(options, "reorder-quantity", builder::partsReorderQuantity);
         applyCliDouble(options, "parts-lead-time", builder::partsLeadTimeHours);
         applyCliInt(options, "initial-parts-qty", builder::initialPartsQuantityOnHand);
         applyCliDouble(options, "validation-tolerance", builder::validationRelativeTolerance);
         applyCliInt(options, "replications", builder::replicationCount);
-        applyCliLong(options, "seed", builder::randomSeed);
+        applyCliLong(options, builder::randomSeed);
     }
 
     private static Map<String, String> parseOptions(String[] args) {
         Map<String, String> options = new HashMap<>();
         for (String arg : args) {
-            if (!arg.startsWith("--") || arg.equals("--help") || arg.startsWith("--config=")) {
+            if (!arg.startsWith("--") || arg.equals("--help") || arg.startsWith(CONFIG_ARG_PREFIX)) {
                 continue;
             }
 
@@ -164,57 +168,57 @@ public final class SimulationConfigLoader {
         return options;
     }
 
-    private static void applyDoubleProperty(Properties properties, String key, Consumer<Double> setter) {
+    private static void applyDoubleProperty(Properties properties, String key, DoubleConsumer setter) {
         String value = properties.getProperty(key);
         if (value != null) {
             setter.accept(Double.parseDouble(value.trim()));
         }
     }
 
-    private static void applyIntProperty(Properties properties, String key, Consumer<Integer> setter) {
+    private static void applyIntProperty(Properties properties, String key, IntConsumer setter) {
         String value = properties.getProperty(key);
         if (value != null) {
             setter.accept(Integer.parseInt(value.trim()));
         }
     }
 
-    private static void applyLongProperty(Properties properties, String key, Consumer<Long> setter) {
-        String value = properties.getProperty(key);
+    private static void applyLongProperty(Properties properties, LongConsumer setter) {
+        String value = properties.getProperty("simulation.randomSeed");
         if (value != null) {
             setter.accept(Long.parseLong(value.trim()));
         }
     }
 
-    private static void applyEnumProperty(Properties properties, String key, Consumer<ServiceTimeModel> setter) {
-        String value = properties.getProperty(key);
+    private static void applyEnumProperty(Properties properties, Consumer<ServiceTimeModel> setter) {
+        String value = properties.getProperty("serviceTime.model");
         if (value != null) {
             setter.accept(ServiceTimeModel.valueOf(value.trim().toUpperCase()));
         }
     }
 
-    private static void applyCliDouble(Map<String, String> options, String key, Consumer<Double> setter) {
+    private static void applyCliDouble(Map<String, String> options, String key, DoubleConsumer setter) {
         String value = options.get(key);
         if (value != null) {
             setter.accept(Double.parseDouble(value));
         }
     }
 
-    private static void applyCliInt(Map<String, String> options, String key, Consumer<Integer> setter) {
+    private static void applyCliInt(Map<String, String> options, String key, IntConsumer setter) {
         String value = options.get(key);
         if (value != null) {
             setter.accept(Integer.parseInt(value));
         }
     }
 
-    private static void applyCliLong(Map<String, String> options, String key, Consumer<Long> setter) {
-        String value = options.get(key);
+    private static void applyCliLong(Map<String, String> options, LongConsumer setter) {
+        String value = options.get("seed");
         if (value != null) {
             setter.accept(Long.parseLong(value));
         }
     }
 
-    private static void applyCliEnum(Map<String, String> options, String key, Consumer<ServiceTimeModel> setter) {
-        String value = options.get(key);
+    private static void applyCliEnum(Map<String, String> options, Consumer<ServiceTimeModel> setter) {
+        String value = options.get("service-time-model");
         if (value != null) {
             setter.accept(ServiceTimeModel.valueOf(value.trim().toUpperCase()));
         }

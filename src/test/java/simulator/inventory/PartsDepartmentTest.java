@@ -41,7 +41,7 @@ class PartsDepartmentTest {
 
         PartsFulfillmentResult result = department.requestPartsForTicket(ticket, 2.0);
 
-        assertEquals(PartsFulfillmentStatus.BLOCKED, result.getStatus());
+        assertEquals(PartsFulfillmentStatus.BLOCKED, result.status());
         assertEquals(TicketStatus.BLOCKED, ticket.getStatus());
         assertEquals(1, department.getPendingOrders().size());
         assertEquals(1, department.getBlockedTickets().size());
@@ -58,7 +58,7 @@ class PartsDepartmentTest {
         department.requestPartsForTicket(ticket, 1.0);
 
         PendingPartOrder order = department.getPendingOrders().get(0);
-        List<ServiceTicket> released = department.processPendingOrders(order.getArrivalTimeHours());
+        List<ServiceTicket> released = department.processPendingOrders(order.arrivalTimeHours());
 
         assertEquals(1, released.size());
         assertEquals(TicketStatus.IN_PROGRESS, ticket.getStatus());

@@ -12,7 +12,6 @@ import simulator.model.PartRequirement;
 import simulator.model.PartsInventory;
 import simulator.model.ServiceTicket;
 import simulator.model.TicketStatus;
-import simulator.stochastic.PoissonDistribution;
 
 public class PartsDepartment {
     private final PartsInventory inventory;
@@ -73,7 +72,7 @@ public class PartsDepartment {
                 continue;
             }
 
-            inventory.receiveStock(order.getPartId(), order.getQuantity());
+            inventory.receiveStock(order.partId(), order.quantity());
             iterator.remove();
             releasedTickets.addAll(releaseBlockedTickets(currentTimeHours));
         }
@@ -104,7 +103,7 @@ public class PartsDepartment {
         Iterator<ServiceTicket> iterator = blockedTickets.iterator();
         while (iterator.hasNext()) {
             ServiceTicket ticket = iterator.next();
-            if (!inventory.areRequirementsAvailable(ticket.getRequiredParts())) {
+            if (inventory.areRequirementsAvailable(ticket.getRequiredParts())) {
                 continue;
             }
 
@@ -124,7 +123,7 @@ public class PartsDepartment {
 
     private void triggerReordersForRequirements(Iterable<PartRequirement> requirements, double currentTimeHours) {
         for (PartRequirement requirement : requirements) {
-            Part part = inventory.getPart(requirement.getPartId());
+            Part part = inventory.getPart(requirement.partId());
             if (part != null && inventory.shouldReorder(part)) {
                 placeOrder(part, currentTimeHours);
             }
@@ -133,16 +132,12 @@ public class PartsDepartment {
 
     private void placeOrdersForShortages(Iterable<PartRequirement> requirements, double currentTimeHours) {
         for (PartRequirement requirement : requirements) {
-            if (inventory.isPartAvailable(requirement.getPartId(), requirement.getQuantity())) {
+            if (inventory.isPartAvailable(requirement.partId(), requirement.quantity())) {
                 continue;
             }
 
-            Part part = inventory.getPart(requirement.getPartId());
-            if (part == null) {
-                continue;
-            }
-
-            if (!hasOpenOrderForPart(part.getPartId())) {
+            Part part = inventory.getPart(requirement.partId());
+            if (part != null && !hasOpenOrderForPart(part.getPartId())) {
                 placeOrder(part, currentTimeHours);
             }
         }
@@ -150,7 +145,7 @@ public class PartsDepartment {
 
     private boolean hasOpenOrderForPart(int partId) {
         for (PendingPartOrder order : pendingOrders) {
-            if (order.getPartId() == partId) {
+            if (order.partId() == partId) {
                 return true;
             }
         }

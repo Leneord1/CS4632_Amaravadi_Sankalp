@@ -46,20 +46,20 @@ public class PartsInventory {
 
     public boolean areRequirementsAvailable(Iterable<PartRequirement> requirements) {
         for (PartRequirement requirement : requirements) {
-            if (!isPartAvailable(requirement.getPartId(), requirement.getQuantity())) {
-                return false;
+            if (!isPartAvailable(requirement.partId(), requirement.quantity())) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public boolean fulfillRequirements(Iterable<PartRequirement> requirements) {
-        if (!areRequirementsAvailable(requirements)) {
+        if (areRequirementsAvailable(requirements)) {
             return false;
         }
 
         for (PartRequirement requirement : requirements) {
-            if (!requestPart(requirement.getPartId(), requirement.getQuantity())) {
+            if (!requestPart(requirement.partId(), requirement.quantity())) {
                 return false;
             }
         }
