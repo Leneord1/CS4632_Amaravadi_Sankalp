@@ -90,6 +90,12 @@ public class MetricsCollector {
         bayUtilizationMetrics.recordOccupiedTime(bay, occupiedHours);
     }
 
+    public void printSnapshot(String label) {
+        System.out.printf(
+                "[Metrics] %s jobsCompleted=%d avgCustomerWait=%.3fh%n",
+                label, throughputMetrics.getRecordedJobs(), customerWaitMetrics.getAverageWaitTime());
+    }
+
     public MetricsReport buildReport() {
         MetricsReport report = new MetricsReport();
         report.setAverageCustomerWaitTime(customerWaitMetrics.getAverageWaitTime());

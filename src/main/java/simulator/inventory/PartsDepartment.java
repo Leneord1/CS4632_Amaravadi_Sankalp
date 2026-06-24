@@ -41,6 +41,12 @@ public class PartsDepartment {
         return new PartsDepartment(partsInventory, new Random(config.getRandomSeed()));
     }
 
+    public void printStatus(double currentTimeHours) {
+        System.out.printf(
+                "[PartsDept] t=%.2fh pendingOrders=%d blocked=%d avgFulfill=%.2fh%n",
+                currentTimeHours, pendingOrders.size(), blockedTickets.size(), getAverageFulfillmentTimeHours());
+    }
+
     public PartsFulfillmentResult requestPartsForTicket(ServiceTicket ticket, double currentTimeHours) {
         if (ticket.getRequiredParts().isEmpty()) {
             ticket.setStatus(TicketStatus.IN_PROGRESS);
@@ -65,15 +71,16 @@ public class PartsDepartment {
 
     public List<ServiceTicket> processPendingOrders(double currentTimeHours) {
         List<ServiceTicket> releasedTickets = new ArrayList<>();
-        Iterator<PendingPartOrder> iterator = pendingOrders.iterator();
-        while (iterator.hasNext()) {
-            PendingPartOrder order = iterator.next();
-            if (!order.isDue(currentTimeHours)) {
-                continue;
+        List<PendingPartOrder> dueOrders = new ArrayList<>();
+        for (PendingPartOrder order : pendingOrders) {
+            if (order.isDue(currentTimeHours)) {
+                dueOrders.add(order);
             }
+        }
 
+        for (PendingPartOrder order : dueOrders) {
             inventory.receiveStock(order.partId(), order.quantity());
-            iterator.remove();
+            pendingOrders.remove(order);
             releasedTickets.addAll(releaseBlockedTickets(currentTimeHours));
         }
         return releasedTickets;

@@ -28,6 +28,10 @@ public class CoxProcess {
         return new CoxProcess(PiecewiseConstantArrivalRate.defaultDealershipDay());
     }
 
+    public void printRate(double timeHours) {
+        System.out.printf("[CoxProcess] lambda(t=%.2fh)=%.2f vehicles/h%n", timeHours, arrivalRateAt(timeHours));
+    }
+
     public double arrivalRateAt(double timeHours) {
         return rateFunction.rateAt(timeHours) * stochasticIntensityMultiplier;
     }

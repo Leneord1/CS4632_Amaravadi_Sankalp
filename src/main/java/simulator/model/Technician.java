@@ -54,6 +54,12 @@ public class Technician {
         return baseLaborTime * Math.max(experienceFactor, 0.5);
     }
 
+    public void printAssignment(ServiceTicket ticket) {
+        System.out.printf(
+                "[Technician %d] start ticket #%d exp=%d serviceTime=%.2fh%n",
+                technicianId, ticket.getTicketId(), experienceLevel, ticket.getActualLaborTime());
+    }
+
     public int getTechnicianId() {
         return technicianId;
     }

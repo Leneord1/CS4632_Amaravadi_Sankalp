@@ -23,6 +23,12 @@ public class Part {
         this.meanLeadTimeHours = meanLeadTimeHours;
     }
 
+    public void printAvailability(int requestedQuantity) {
+        System.out.printf(
+                "[Part %d] %s on-hand=%d requested=%d fillable=%b%n",
+                partId, description, quantityOnHand, requestedQuantity, quantityOnHand >= requestedQuantity);
+    }
+
     public int getPartId() {
         return partId;
     }

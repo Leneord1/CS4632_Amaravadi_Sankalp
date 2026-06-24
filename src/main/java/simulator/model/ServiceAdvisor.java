@@ -20,6 +20,10 @@ public class ServiceAdvisor {
         return ticket;
     }
 
+    public void printIntake(ServiceTicket ticket) {
+        System.out.printf("[Advisor %d] intake ticket #%d (%s)%n", advisorId, ticket.getTicketId(), ticket.getJobType());
+    }
+
     public int getAdvisorId() {
         return advisorId;
     }

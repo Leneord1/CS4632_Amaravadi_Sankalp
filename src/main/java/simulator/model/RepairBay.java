@@ -10,6 +10,10 @@ public class RepairBay {
         this.isOccupied = false;
     }
 
+    public void printOccupancy(double currentTimeHours) {
+        System.out.printf("[Bay %d] occupied=%b at t=%.2fh%n", bayId, isOccupied, currentTimeHours);
+    }
+
     public int getBayId() {
         return bayId;
     }

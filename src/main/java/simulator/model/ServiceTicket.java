@@ -25,6 +25,12 @@ public class ServiceTicket {
         this.partsDelay = 0.0;
     }
 
+    public void printStatus(String stage) {
+        System.out.printf(
+                "[Ticket #%d] %s status=%s labor=%.2fh queueDelay=%.2fh partsDelay=%.2fh%n",
+                ticketId, stage, status, actualLaborTime, queueDelay, partsDelay);
+    }
+
     public int getTicketId() {
         return ticketId;
     }

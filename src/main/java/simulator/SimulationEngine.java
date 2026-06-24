@@ -1,0 +1,289 @@
+package simulator;
+
+
+import java.util.ArrayDeque;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Random;
+import simulator.config.SimulationConfig;
+import simulator.inventory.PartsDepartment;
+import simulator.inventory.PartsFulfillmentResult;
+import simulator.inventory.PendingPartOrder;
+import simulator.metrics.MetricsCollector;
+import simulator.model.Customer;
+import simulator.model.JobQueue;
+import simulator.model.RepairBay;
+import simulator.model.ServiceAdvisor;
+import simulator.model.ServiceTicket;
+import simulator.model.Technician;
+import simulator.model.TicketStatus;
+import simulator.stochastic.CoxProcess;
+import simulator.stochastic.GammaDistribution;
+import simulator.stochastic.PiecewiseConstantArrivalRate;
+import simulator.stochastic.PoissonDistribution;
+import simulator.stochastic.ServiceTimeEquations;
+
+public class SimulationEngine {
+    private static final double ADVISOR_INTAKE_HOURS = 0.1;
+    private static final double PARTS_REQUIREMENT_PROBABILITY = 0.4;
+    private static final String[] JOB_TYPES = {"Oil Change", "Brake Service", "Diagnostics", "Transmission"};
+
+    private enum EventType { ARRIVAL, INTAKE_COMPLETE, SERVICE_COMPLETE, PARTS_ARRIVAL }
+
+    private record Event(double time, EventType type, long sequence, Customer customer, ServiceTicket ticket) {
+    }
+
+    private final SimulationConfig config;
+    private final Random random;
+    private final CoxProcess coxProcess;
+    private final JobQueue jobQueue = new JobQueue();
+    private final PartsDepartment partsDepartment;
+    private final MetricsCollector metrics = new MetricsCollector();
+
+    private final Deque<ServiceAdvisor> freeAdvisors = new ArrayDeque<>();
+    private final Deque<Technician> freeTechnicians = new ArrayDeque<>();
+    private final Deque<Customer> intakeWaitQueue = new ArrayDeque<>();
+
+    private final PriorityQueue<Event> events =
+            new PriorityQueue<>(Comparator.comparingDouble((Event e) -> e.time).thenComparingLong(e -> e.sequence));
+    private final Map<ServiceTicket, Customer> customerByTicket = new HashMap<>();
+    private final Map<Customer, Double> advisorWaitByCustomer = new HashMap<>();
+    private final Map<ServiceTicket, Double> readyTimeByTicket = new HashMap<>();
+
+    private long eventSequence;
+    private int nextTicketId = 1;
+    private double scheduledPartsArrivalTime = Double.POSITIVE_INFINITY;
+    private double clockHours;
+
+    public SimulationEngine(SimulationConfig config) {
+        this.config = config;
+        this.random = new Random(config.getRandomSeed());
+        this.coxProcess = new CoxProcess(
+                new PiecewiseConstantArrivalRate(
+                        new double[] {0.0},
+                        new double[] {config.getArrivalRate()}),
+                random,
+                1.0);
+        this.partsDepartment = PartsDepartment.fromConfig(config);
+        buildResources();
+        metrics.configureSimulation(config);
+    }
+
+    public MetricsCollector run() {
+        config.printConfig("run start");
+        scheduleArrivals();
+
+        while (!events.isEmpty()) {
+            Event event = events.poll();
+            clockHours = event.time;
+            switch (event.type) {
+                case ARRIVAL -> handleArrival(event);
+                case INTAKE_COMPLETE -> handleIntakeComplete(event);
+                case SERVICE_COMPLETE -> handleServiceComplete(event);
+                case PARTS_ARRIVAL -> handlePartsArrival(event);
+                default -> throw new IllegalStateException("Unknown event type");
+            }
+        }
+
+        metrics.printSnapshot("run end");
+        metrics.report();
+        return metrics;
+    }
+
+    private void buildResources() {
+        for (int i = 1; i <= config.getAdvisorCount(); i++) {
+            freeAdvisors.add(new ServiceAdvisor(i));
+        }
+        for (int i = 1; i <= config.getTechnicianCount(); i++) {
+            int experienceLevel = 1 + random.nextInt(config.getMaxExperienceLevel());
+            Technician technician = new Technician(i, experienceLevel, config);
+            RepairBay bay = new RepairBay(i);
+            technician.setAssignedBay(bay);
+            bay.setAssignedTechnician(technician);
+            freeTechnicians.add(technician);
+        }
+    }
+
+    private void scheduleArrivals() {
+        if (config.getCustomerCount() > 0) {
+            scheduleFixedArrivals(config.getCustomerCount());
+            return;
+        }
+
+        int maxArrivals = (int) Math.ceil(config.getArrivalRate() * config.getSimulationHorizonHours() * 3) + 10;
+        List<Customer> arrivals =
+                coxProcess.generateArrivals(0.0, config.getSimulationHorizonHours(), maxArrivals);
+        for (Customer customer : arrivals) {
+            push(customer.getArrivalTime(), EventType.ARRIVAL, customer, null);
+        }
+    }
+
+    private void scheduleFixedArrivals(int customerCount) {
+        double arrivalTime = 0.0;
+        for (int i = 0; i < customerCount; i++) {
+            arrivalTime += PoissonDistribution.sampleExponentialInterArrival(random, config.getArrivalRate());
+            Customer customer = new Customer(arrivalTime);
+            push(arrivalTime, EventType.ARRIVAL, customer, null);
+        }
+    }
+
+    private void handleArrival(Event event) {
+        coxProcess.printRate(event.time);
+        event.customer.printArrival(event.time);
+        intakeWaitQueue.add(event.customer);
+        tryStartIntakes(event.time);
+    }
+
+    private void tryStartIntakes(double now) {
+        while (!intakeWaitQueue.isEmpty() && !freeAdvisors.isEmpty()) {
+            Customer customer = intakeWaitQueue.poll();
+            ServiceAdvisor advisor = freeAdvisors.poll();
+
+            double advisorWait = now - customer.getArrivalTime();
+            advisorWaitByCustomer.put(customer, advisorWait);
+
+            ServiceTicket ticket = null;
+            if (advisor != null) {
+                ticket = advisor.intakeCustomer(
+                        customer,
+                        nextTicketId++,
+                        JOB_TYPES[random.nextInt(JOB_TYPES.length)],
+                        config.getMeanServiceTimeHours(),
+                        sampleServiceTime());
+            }
+            maybeAddPartsRequirement(ticket);
+            if (advisor != null) {
+                advisor.printIntake(ticket);
+            }
+
+            if (ticket != null) {
+                customerByTicket.put(ticket, customer);
+            }
+            push(now + ADVISOR_INTAKE_HOURS, EventType.INTAKE_COMPLETE, customer, ticket);
+        }
+    }
+
+    private void handleIntakeComplete(Event event) {
+        ServiceAdvisor advisor = event.customer.getAssignedAdvisor();
+        advisor.setAvailable(true);
+        freeAdvisors.add(advisor);
+
+        PartsFulfillmentResult result = partsDepartment.requestPartsForTicket(event.ticket, event.time);
+        partsDepartment.printStatus(event.time);
+        if (result.isFulfilled()) {
+            enqueueReadyTicket(event.ticket, event.time);
+        } else {
+            event.ticket.printStatus("blocked on parts");
+        }
+        schedulePartsArrival();
+
+        tryStartIntakes(event.time);
+        tryStartService(event.time);
+    }
+
+    private void enqueueReadyTicket(ServiceTicket ticket, double now) {
+        readyTimeByTicket.put(ticket, now);
+        jobQueue.enqueue(ticket);
+        jobQueue.printQueueDepth("ticket #" + ticket.getTicketId() + " ready");
+    }
+
+    private void tryStartService(double now) {
+        while (!jobQueue.isEmpty() && !freeTechnicians.isEmpty()) {
+            ServiceTicket ticket = jobQueue.dequeue();
+            Technician technician = freeTechnicians.poll();
+            RepairBay bay = null;
+            if (technician != null) {
+                bay = technician.getAssignedBay();
+            }
+
+            if (technician != null) {
+                technician.setAvailable(false);
+            }
+            if (technician != null) {
+                technician.setCurrentTicket(ticket);
+            }
+            ticket.setAssignedTechnician(technician);
+            if (bay != null) {
+                bay.setOccupied(true);
+            }
+
+            double readyTime = readyTimeByTicket.getOrDefault(ticket, now);
+            ticket.setQueueDelay(ticket.getQueueDelay() + (now - readyTime));
+            ticket.setStatus(TicketStatus.IN_PROGRESS);
+
+            if (technician != null) {
+                technician.printAssignment(ticket);
+            }
+            if (bay != null) {
+                bay.printOccupancy(now);
+            }
+
+            push(now + ticket.getActualLaborTime(), EventType.SERVICE_COMPLETE, customerByTicket.get(ticket), ticket);
+        }
+    }
+
+    private void handleServiceComplete(Event event) {
+        ServiceTicket ticket = event.ticket;
+        Technician technician = ticket.getAssignedTechnician();
+        RepairBay bay = technician.getAssignedBay();
+
+        ticket.setStatus(TicketStatus.COMPLETE);
+        bay.setOccupied(false);
+        technician.setCurrentTicket(null);
+        technician.setAvailable(true);
+        freeTechnicians.add(technician);
+
+        ticket.printStatus("complete");
+        metrics.recordTicket(ticket);
+
+        Customer customer = customerByTicket.get(ticket);
+        double advisorWait = advisorWaitByCustomer.getOrDefault(customer, 0.0);
+        metrics.recordCustomerCompletion(customer, advisorWait, ticket.getActualLaborTime());
+
+        tryStartService(event.time);
+    }
+
+    private void handlePartsArrival(Event event) {
+        scheduledPartsArrivalTime = Double.POSITIVE_INFINITY;
+        List<ServiceTicket> released = partsDepartment.processPendingOrders(event.time);
+        partsDepartment.printStatus(event.time);
+        for (ServiceTicket ticket : released) {
+            ticket.printStatus("parts received");
+            enqueueReadyTicket(ticket, event.time);
+        }
+        schedulePartsArrival();
+        tryStartService(event.time);
+    }
+
+    private void schedulePartsArrival() {
+        double earliest = Double.POSITIVE_INFINITY;
+        for (PendingPartOrder order : partsDepartment.getPendingOrders()) {
+            earliest = Math.min(earliest, order.arrivalTimeHours());
+        }
+        if (earliest >= scheduledPartsArrivalTime) {
+            return;
+        }
+        scheduledPartsArrivalTime = earliest;
+        push(Math.max(earliest, clockHours), EventType.PARTS_ARRIVAL, null, null);
+    }
+
+    private void maybeAddPartsRequirement(ServiceTicket ticket) {
+        if (random.nextDouble() < PARTS_REQUIREMENT_PROBABILITY) {
+            ticket.addRequiredPart(1, 1 + random.nextInt(3));
+        }
+    }
+
+    private double sampleServiceTime() {
+        double meanServiceTime = config.getMeanServiceTimeHours();
+        double scale = ServiceTimeEquations.gammaScaleParameter(meanServiceTime, config.getGammaShapeParameter());
+        return GammaDistribution.sample(random, config.getGammaShapeParameter(), scale);
+    }
+
+    private void push(double time, EventType type, Customer customer, ServiceTicket ticket) {
+        events.add(new Event(time, type, eventSequence++, customer, ticket));
+    }
+}

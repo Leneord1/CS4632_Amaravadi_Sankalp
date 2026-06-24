@@ -17,6 +17,10 @@ public class JobQueue {
         return queue.removeFirst();
     }
 
+    public void printQueueDepth(String label) {
+        System.out.printf("[JobQueue] %s depth=%d%n", label, queue.size());
+    }
+
     public boolean isEmpty() {
         return queue.isEmpty();
     }

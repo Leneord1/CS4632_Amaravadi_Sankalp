@@ -1,9 +1,9 @@
 package simulator;
 
+import java.util.Scanner;
 import java.util.logging.Logger;
 import simulator.config.SimulationConfig;
 import simulator.config.SimulationConfigLoader;
-import simulator.metrics.MetricsCollector;
 
 public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
@@ -11,6 +11,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             SimulationConfig config = SimulationConfigLoader.load(args);
+            config = promptForSettings(config);
             run(config);
         } catch (IllegalArgumentException exception) {
             if (exception.getMessage() != null && exception.getMessage().contains("Usage:")) {
@@ -21,12 +22,46 @@ public class Main {
         }
     }
 
+    private static SimulationConfig promptForSettings(SimulationConfig config) {
+        Scanner userInput = new Scanner(System.in);
+        int technicianCount = readInt(userInput, "Number of technicians", 1);
+        int advisorCount = readInt(userInput, "Number of advisors", 1);
+        int customerCount = readInt(userInput, "Number of customers", 0);
+        return config.toBuilder()
+                .technicianCount(technicianCount)
+                .advisorCount(advisorCount)
+                .customerCount(customerCount)
+                .build();
+    }
+
+    private static int readInt(Scanner scanner, String label, int minValue) {
+        while (true) {
+            System.out.printf("%s [%d]: ", label, minValue);
+            if (!scanner.hasNextLine()) {
+                return minValue;
+            }
+            String line = scanner.nextLine().trim();
+            if (line.isEmpty()) {
+                return minValue;
+            }
+            try {
+                int value = Integer.parseInt(line);
+                if (value >= minValue) {
+                    return value;
+                }
+            } catch (NumberFormatException ignored) {
+
+            }
+            System.out.printf("Enter a whole number >= %d.%n", minValue);
+        }
+    }
+
     static void run(SimulationConfig config) {
         LOGGER.info("Service Department Operational Optimization Simulator");
         LOGGER.info(formatConfig(config));
 
-        MetricsCollector metricsCollector = new MetricsCollector();
-        metricsCollector.configureSimulation(config);
+        SimulationEngine engine = new SimulationEngine(config);
+        engine.run();
     }
 
     private static String formatConfig(SimulationConfig config) {

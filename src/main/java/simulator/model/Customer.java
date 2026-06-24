@@ -11,6 +11,11 @@ public class Customer {
         this.totalWaitTime = 0.0;
     }
 
+
+    public void printArrival(double currentTimeHours) {
+        System.out.printf("[Customer] arrived t=%.2fh (recorded arrival=%.2fh)%n", currentTimeHours, arrivalTime);
+    }
+
     public double getArrivalTime() {
         return arrivalTime;
     }

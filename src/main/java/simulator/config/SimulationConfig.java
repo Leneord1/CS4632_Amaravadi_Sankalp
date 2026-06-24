@@ -6,6 +6,7 @@ public final class SimulationConfig {
     private final int technicianCount;
     private final double serviceRatePerTechnician;
     private final int advisorCount;
+    private final int customerCount;
     private final double experienceAlpha;
     private final int maxExperienceLevel;
     private final double gammaShapeParameter;
@@ -24,6 +25,7 @@ public final class SimulationConfig {
         this.technicianCount = builder.technicianCount;
         this.serviceRatePerTechnician = builder.serviceRatePerTechnician;
         this.advisorCount = builder.advisorCount;
+        this.customerCount = builder.customerCount;
         this.experienceAlpha = builder.experienceAlpha;
         this.maxExperienceLevel = builder.maxExperienceLevel;
         this.gammaShapeParameter = builder.gammaShapeParameter;
@@ -41,8 +43,37 @@ public final class SimulationConfig {
         return builder().build();
     }
 
+    public void printConfig(String label) {
+        System.out.printf(
+                "[Config] %s horizon=%.1fh lambda=%.2f techs=%d mu=%.2f advisors=%d model=%s%n",
+                label, simulationHorizonHours, arrivalRate, technicianCount,
+                serviceRatePerTechnician, advisorCount, serviceTimeModel);
+    }
+
     public static Builder builder() {
         return new Builder();
+    }
+
+    // Copies all fields into a new builder so individual settings can be overridden.
+    public Builder toBuilder() {
+        return new Builder()
+                .simulationHorizonHours(simulationHorizonHours)
+                .arrivalRate(arrivalRate)
+                .technicianCount(technicianCount)
+                .serviceRatePerTechnician(serviceRatePerTechnician)
+                .advisorCount(advisorCount)
+                .customerCount(customerCount)
+                .experienceAlpha(experienceAlpha)
+                .maxExperienceLevel(maxExperienceLevel)
+                .gammaShapeParameter(gammaShapeParameter)
+                .partsReorderPoint(partsReorderPoint)
+                .partsReorderQuantity(partsReorderQuantity)
+                .partsLeadTimeHours(partsLeadTimeHours)
+                .initialPartsQuantityOnHand(initialPartsQuantityOnHand)
+                .validationRelativeTolerance(validationRelativeTolerance)
+                .replicationCount(replicationCount)
+                .randomSeed(randomSeed)
+                .serviceTimeModel(serviceTimeModel);
     }
 
     public double getSimulationHorizonHours() {
@@ -63,6 +94,10 @@ public final class SimulationConfig {
 
     public int getAdvisorCount() {
         return advisorCount;
+    }
+
+    public int getCustomerCount() {
+        return customerCount;
     }
 
     public double getExperienceAlpha() {
@@ -122,6 +157,7 @@ public final class SimulationConfig {
         private int technicianCount = 3;
         private double serviceRatePerTechnician = 2.0;
         private int advisorCount = 4;
+        private int customerCount = 0;
         private double experienceAlpha = 1.0;
         private int maxExperienceLevel = 10;
         private double gammaShapeParameter = 4.0;
@@ -156,6 +192,11 @@ public final class SimulationConfig {
 
         public Builder advisorCount(int advisorCount) {
             this.advisorCount = advisorCount;
+            return this;
+        }
+
+        public Builder customerCount(int customerCount) {
+            this.customerCount = customerCount;
             return this;
         }
 
@@ -234,6 +275,9 @@ public final class SimulationConfig {
             }
             if (advisorCount <= 0) {
                 throw new IllegalArgumentException("advisorCount must be positive");
+            }
+            if (customerCount < 0) {
+                throw new IllegalArgumentException("customerCount must be non-negative");
             }
             if (experienceAlpha < 0.0) {
                 throw new IllegalArgumentException("experienceAlpha must be non-negative");
