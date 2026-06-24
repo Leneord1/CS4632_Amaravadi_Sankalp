@@ -27,7 +27,7 @@ class MetricsCollectorTest {
         ticket.setAssignedTechnician(technician);
 
         customer.setTicket(ticket);
-        collector.record(ticket);
+        collector.recordTicket(ticket);
         collector.recordCustomerCompletion(customer, 0.5, 2.0);
 
         MetricsReport report = collector.buildReport();

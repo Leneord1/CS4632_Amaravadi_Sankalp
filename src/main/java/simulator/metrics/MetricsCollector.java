@@ -55,7 +55,7 @@ public class MetricsCollector {
                         .build());
     }
 
-    public void record(ServiceTicket ticket) {
+    public void recordTicket(ServiceTicket ticket) {
         partsDelayMetrics.recordPartsDelay(ticket);
         partsDelayMetrics.recordTotalJobDelay(ticket);
         partsDelays.add(ticket.getPartsDelay());
