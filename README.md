@@ -26,15 +26,15 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - **Milestone 4 (Analysis and Validation)**: N/A
 
 ## Installation Instructions
-1. Open preferred Command-Line Interface (CLI)
-2. Enter "java -version" and verify that the version installed is newer then JDK 17
-3. If JDK is older then 17 is installed, download and install JDK 17 or newer
-4. Enter "mvn -version" and verify that 3.13 or newer is installed
-5. If not, then install a version newer then 3.13
-6. Download the project from GitHub
-7. Open the project in the preferred IDE
-8. Build the project with the command "mvn build" in the IDE's terminal
-9. Run the simulation by running the file named main
+- 1. Open preferred Command-Line Interface (CLI)
+- 2. Enter "java -version" and verify that the version installed is newer then JDK 17
+- 3. If JDK is older then 17 is installed, download and install JDK 17 or newer
+- 4. Enter "mvn -version" and verify that 3.13 or newer is installed
+- 5. If not, then install a version newer then 3.13
+- 6. Download the project from GitHub
+- 7. Open the project in the preferred IDE
+- 8. Build the project with the command "mvn build" in the IDE's terminal
+- 9. Run the simulation by running the file named main
 
 ### Dependencies and Versions
 - Java 17
@@ -43,17 +43,17 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - Additional dependencies will be documented as they are used
 
 ### Step-by-Step Setup Guide
-1. Open preferred Command-Line Interface (CLI)
-2. Enter "java -version" and verify that the version installed is newer then JDK 17
-3. If JDK is older then 17 is installed, download and install JDK 17 or newer
-4. Enter "mvn -version" and verify that 3.13 or newer is installed
-5. If not, then install a version newer then 3.13
-6. Download the project from GitHub
-7. Open the project in the preferred IDE
-8. Build the project with the command "mvn build" in the IDE's terminal
-9. Run the simulation by running the file named main
-10. Once the simulation is running, enter how many technicians, advisors and customers you have for the day
-11. Press enter and get the relavent information printed back
+- 1. Open preferred Command-Line Interface (CLI)
+- 2. Enter "java -version" and verify that the version installed is newer then JDK 17
+- 3. If JDK is older then 17 is installed, download and install JDK 17 or newer
+- 4. Enter "mvn -version" and verify that 3.13 or newer is installed
+- 5. If not, then install a version newer then 3.13
+- 6. Download the project from GitHub
+- 7. Open the project in the preferred IDE
+- 8. Build the project with the command "mvn build" in the IDE's terminal
+- 9. Run the simulation by running the file named main
+- 10. Once the simulation is running, enter how many technicians, advisors and customers you have for the day
+- 11. Press enter and get the relavent information printed back
 
 ### Troubleshooting Common Issues
 [Troubleshooting section to be added]
