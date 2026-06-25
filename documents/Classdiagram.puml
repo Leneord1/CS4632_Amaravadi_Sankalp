@@ -5,6 +5,7 @@ skinparam classAttributeIconSize 0
 class SimulationEngine {
     - clock: double
     - eventQueue: PriorityQueue<Event>
+    - partsDepartment: PartsDepartment
     + run(): void
     + scheduleEvent(Event): void
 }
@@ -62,51 +63,6 @@ class RepairBay {
     - assignedTechnician: Technician
 }
 
-class PartsDepartment {
-    - inventory: PartsInventory
-    - pendingOrders: List<PendingPartOrder>
-    - blockedTickets: List<ServiceTicket>
-    - averageFulfillmentTimeHours: double
-    + requestPartsForTicket(ServiceTicket, double): PartsFulfillmentResult
-    + processPendingOrders(double): List<ServiceTicket>
-    + getAverageFulfillmentTimeHours(): double
-}
-
-class PartsInventory {
-    - partsById: Map<Integer, Part>
-    + addPart(Part): void
-    + requestPart(int, int): boolean
-    + fulfillRequirements(Iterable<PartRequirement>): boolean
-    + shouldReorder(Part): boolean
-}
-
-class Part {
-    - partId: int
-    - description: String
-    - quantityOnHand: int
-    - reorderPoint: int
-    - reorderQuantity: int
-    - meanLeadTimeHours: double
-}
-
-class PendingPartOrder {
-    - orderId: int
-    - partId: int
-    - quantity: int
-    - orderTimeHours: double
-    - arrivalTimeHours: double
-}
-
-class PartsFulfillmentResult {
-    - status: PartsFulfillmentStatus
-    - partsDelayHours: double
-}
-
-enum PartsFulfillmentStatus {
-    FULFILLED
-    BLOCKED
-}
-
 class JobQueue {
     - queue: LinkedList<ServiceTicket>
     + enqueue(ServiceTicket): void
@@ -122,21 +78,81 @@ class MetricsCollector {
     + report(): void
 }
 
+class PartsInventory {
+    - partsById: Map<Integer, Part>
+    + addPart(Part): void
+    + requestPart(int, int): boolean
+    + fulfillRequirements(Iterable<PartRequirement>): boolean
+    + shouldReorder(Part): boolean
+    + receiveStock(int, int): void
+}
+
+class Part {
+    - partId: int
+    - description: String
+    - quantityOnHand: int
+    - reorderPoint: int
+    - reorderQuantity: int
+    - meanLeadTimeHours: double
+}
+
+package "Parts Department" {
+    class PartsDepartment {
+        - inventory: PartsInventory
+        - pendingOrders: List<PendingPartOrder>
+        - blockedTickets: List<ServiceTicket>
+        - averageFulfillmentTimeHours: double
+        + requestPartsForTicket(ServiceTicket, double): PartsFulfillmentResult
+        + processPendingOrders(double): List<ServiceTicket>
+        + getAverageFulfillmentTimeHours(): double
+        + getInventory(): PartsInventory
+        + getPendingOrders(): List<PendingPartOrder>
+        + getBlockedTickets(): List<ServiceTicket>
+    }
+
+    class PendingPartOrder {
+        - orderId: int
+        - partId: int
+        - quantity: int
+        - orderTimeHours: double
+        - arrivalTimeHours: double
+        + isDue(double): boolean
+    }
+
+    class PartsFulfillmentResult {
+        - status: PartsFulfillmentStatus
+        - partsDelayHours: double
+        + isFulfilled(): boolean
+    }
+
+    enum PartsFulfillmentStatus {
+        FULFILLED
+        BLOCKED
+    }
+}
+
 SimulationEngine "1" *-- "1" JobQueue
 SimulationEngine "1" *-- "1" MetricsCollector
 SimulationEngine "1" *-- "1" PartsDepartment
+
 PartsDepartment "1" *-- "1" PartsInventory
 PartsDepartment "1" o-- "many" PendingPartOrder
 PartsDepartment "many" ..> "many" ServiceTicket : blocks / releases
+PartsDepartment ..> PartsFulfillmentResult : returns
+
 Customer "1" --> "1" ServiceTicket
 Customer "many" --> "1" ServiceAdvisor
 ServiceAdvisor "1" ..> "1" ServiceTicket : creates
 ServiceTicket "1" *-- "many" PartRequirement
-PartRequirement "many" --> "1" Part
 ServiceTicket "1" --> "1" TicketStatus
+ServiceTicket "many" ..> "1" PartsDepartment : requests parts
+
+PartRequirement "many" --> "1" Part
 Technician "1" --> "1" RepairBay
 Technician "1" ..> "1" JobQueue : pulls from
 Technician "1" ..> "1" PartsDepartment : requests parts
+
 PartsInventory "1" *-- "many" Part
+PendingPartOrder "many" --> "1" Part
 
 @enduml

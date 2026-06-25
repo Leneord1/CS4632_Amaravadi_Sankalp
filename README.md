@@ -56,18 +56,37 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - 11. Press enter and get the relavent information printed back
 
 ### Troubleshooting Common Issues
-[Troubleshooting section to be added]
+- If "java" or "mvn" is not recognized, confirm JDK 17 and Maven are installed and added to your system PATH
+- If the program will not start, run "mvn compile" from the project root before running main
+- If prompts do not appear when running from an IDE, run the simulation from a terminal instead
+- Run "java -cp target/classes simulator.Main --help" to view all available command-line options
 
 ## Usage
 
 ### How to Run the Simulation
-[Usage instructions to be added upon UI completion]
+- 1. Open a terminal in the project folder
+- 2. Build the project with "mvn compile"
+- 3. Run "java -cp target/classes simulator.Main"
+- 4. Enter the number of technicians, advisors, and customers when prompted, or press enter to keep the default values
+- 5. Review the simulation results printed to the console
+
+A graphical user interface is still in development. Until the UI is complete, the simulation is run from the command line or IDE as described above.
 
 ### Command-Line Arguments or Configuration
-[Configuration details to be added]
+- Default settings are stored in "src/main/resources/simulation.properties"
+- Common command-line options include:
+  - "--horizon=<hours>" for simulation run length
+  - "--arrival-rate=<lambda>" for customer arrival rate
+  - "--technicians=<count>" for technician and bay count
+  - "--advisors=<count>" for service advisor count
+  - "--seed=<value>" for a repeatable random seed
+  - "--help" to list all available options
+- Example: "java -cp target/classes simulator.Main --horizon=10 --arrival-rate=4 --technicians=3"
 
 ### Expected Output/Behavior
-[Expected output specifications to be added]
+- The simulation runs for the configured time period (default 10 hours) and prints configuration details to the console
+- Output includes customer wait times, technician and bay utilization, parts delays, jobs completed, and queue benchmarks
+- These results are designed to help identify where the department is slowing down so staffing and inventory decisions can be evaluated
 
 ## Architecture Overview
 
@@ -78,7 +97,12 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - **Analytics Module**: Performance metrics and bottleneck identification
 
 ### Architecture to UML Design
-[UML mapping to be documented]
+- The class diagram in "documents/Classdiagram.puml" shows the planned structure for SimulationEngine, customers, advisors, tickets, technicians, bays, parts, the job queue, and metrics collection
+- The Java classes follow this layout
+- The activity diagram in "documents/ActivityUML.puml" shows the flow from customer arrival through ticket creation, technician assignment, parts fulfillment, repair, and job completion
+- The simulation engine follows this same flow through its event handlers
 
 ### Architectural Changes
-[Any deviations from original design to be documented]
+- SimKit was replaced with a built-in event scheduler to keep the project self-contained and easier to maintain
+- JavaFX visualization was deferred so the simulation core and metrics could be completed first
+- Service advisor intake time is kept constant rather than experience-based, matching the original project assumptions
