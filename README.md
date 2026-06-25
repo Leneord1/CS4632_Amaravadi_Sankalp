@@ -28,7 +28,7 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 [Instructions to be added upon completion of implementation]
 
 ### Dependencies and Versions
-- Java (primary language)
+- Java 17
 - [Additional dependencies to be documented]
 
 ### Step-by-Step Setup Guide
