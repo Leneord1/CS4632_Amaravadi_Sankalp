@@ -14,25 +14,46 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - Console output for simulation results
 
 ### What's Still to Come
-- **UI Implementation**: Complete graphical user interface for simulation visualization
 - **UI Wireframes**: Design sketches for user interface components
+- **UI Implementation**: Complete graphical user interface for simulation visualization
 - **Experience-Based Service Times**: Enhanced modeling of technician skill progression affecting service duration
 - **Comprehensive Testing**: Full test suite for all simulation features
 - **Real-World Validation**: Testing with actual automotive service department metrics and performance data
 
 ### Milestone Progress
-- **Milestone 2 (Initial Implementation)**: Components connected, console output functional, basic documentation complete
-- **Milestone 3 (Complete Implementation and Testing)**: In progress - UI development, advanced features, and comprehensive testing
+- **Milestone 2 (Initial Implementation)**: Core components created and connected, console output functional, basic documentation complete
+- **Milestone 3 (Complete Implementation and Testing)**: UI development, advanced features, and comprehensive testing
+- **Milestone 4 (Analysis and Validation)**: N/A
 
 ## Installation Instructions
-[Instructions to be added upon completion of implementation]
+1. Open preferred Command-Line Interface (CLI)
+2. Enter "java -version" and verify that the version installed is newer then JDK 17
+3. If JDK is older then 17 is installed, download and install JDK 17 or newer
+4. Enter "mvn -version" and verify that 3.13 or newer is installed
+5. If not, then install a version newer then 3.13
+6. Download the project from GitHub
+7. Open the project in the preferred IDE
+8. Build the project with the command "mvn build" in the IDE's terminal
+9. Run the simulation by running the file named main
 
 ### Dependencies and Versions
 - Java 17
-- [Additional dependencies to be documented]
+- JUnit 5.11.01
+- JaCoCo 0.8.12
+- Additional dependencies will be documented as they are used
 
 ### Step-by-Step Setup Guide
-[Setup guide to be added]
+1. Open preferred Command-Line Interface (CLI)
+2. Enter "java -version" and verify that the version installed is newer then JDK 17
+3. If JDK is older then 17 is installed, download and install JDK 17 or newer
+4. Enter "mvn -version" and verify that 3.13 or newer is installed
+5. If not, then install a version newer then 3.13
+6. Download the project from GitHub
+7. Open the project in the preferred IDE
+8. Build the project with the command "mvn build" in the IDE's terminal
+9. Run the simulation by running the file named main
+10. Once the simulation is running, enter how many technicians, advisors and customers you have for the day
+11. Press enter and get the relavent information printed back
 
 ### Troubleshooting Common Issues
 [Troubleshooting section to be added]
