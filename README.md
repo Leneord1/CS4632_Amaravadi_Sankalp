@@ -103,6 +103,5 @@ A graphical user interface is still in development. Until the UI is complete, th
 * The simulation engine follows this same flow through its event handlers
 
 ### Architectural Changes
-* SimKit was replaced with a built*in event scheduler to keep the project self*contained and easier to maintain
 * JavaFX visualization was deferred so the simulation core and metrics could be completed first
 * Service advisor intake time is kept constant rather than experience*based, matching the original project assumptions
