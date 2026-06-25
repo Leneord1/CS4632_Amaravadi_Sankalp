@@ -1,6 +1,10 @@
 package simulator.model;
 
+import java.util.logging.Logger;
+
 public class Customer {
+    private static final Logger LOGGER = Logger.getLogger(Customer.class.getName());
+
     private final double arrivalTime;
     private double totalWaitTime;
     private ServiceAdvisor assignedAdvisor;
@@ -13,7 +17,8 @@ public class Customer {
 
 
     public void printArrival(double currentTimeHours) {
-        System.out.printf("[Customer] arrived t=%.2fh (recorded arrival=%.2fh)%n", currentTimeHours, arrivalTime);
+        LOGGER.info(String.format(
+                "[Customer] arrived t=%.2fh (recorded arrival=%.2fh)", currentTimeHours, arrivalTime));
     }
 
     public double getArrivalTime() {

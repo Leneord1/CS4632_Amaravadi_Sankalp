@@ -3,9 +3,12 @@ package simulator.model;
 import simulator.config.ServiceTimeModel;
 import simulator.config.SimulationConfig;
 import simulator.stochastic.ServiceTimeEquations;
+import java.util.logging.Logger;
 
 @SuppressWarnings("ALL")
 public class Technician {
+    private static final Logger LOGGER = Logger.getLogger(Technician.class.getName());
+
     private final int technicianId;
     private int experienceLevel;
     private boolean isAvailable;
@@ -55,9 +58,9 @@ public class Technician {
     }
 
     public void printAssignment(ServiceTicket ticket) {
-        System.out.printf(
-                "[Technician %d] start ticket #%d exp=%d serviceTime=%.2fh%n",
-                technicianId, ticket.getTicketId(), experienceLevel, ticket.getActualLaborTime());
+        LOGGER.info(String.format(
+                "[Technician %d] start ticket #%d exp=%d serviceTime=%.2fh",
+                technicianId, ticket.getTicketId(), experienceLevel, ticket.getActualLaborTime()));
     }
 
     public int getTechnicianId() {

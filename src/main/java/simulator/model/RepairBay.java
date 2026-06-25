@@ -1,6 +1,10 @@
 package simulator.model;
 
+import java.util.logging.Logger;
+
 public class RepairBay {
+    private static final Logger LOGGER = Logger.getLogger(RepairBay.class.getName());
+
     private final int bayId;
     private boolean isOccupied;
     private Technician assignedTechnician;
@@ -11,7 +15,7 @@ public class RepairBay {
     }
 
     public void printOccupancy(double currentTimeHours) {
-        System.out.printf("[Bay %d] occupied=%b at t=%.2fh%n", bayId, isOccupied, currentTimeHours);
+        LOGGER.info(String.format("[Bay %d] occupied=%b at t=%.2fh", bayId, isOccupied, currentTimeHours));
     }
 
     public int getBayId() {

@@ -29,7 +29,8 @@ public class CoxProcess {
     }
 
     public void printRate(double timeHours) {
-        System.out.printf("[CoxProcess] lambda(t=%.2fh)=%.2f vehicles/h%n", timeHours, arrivalRateAt(timeHours));
+        LOGGER.info(String.format(
+                "[CoxProcess] lambda(t=%.2fh)=%.2f vehicles/h", timeHours, arrivalRateAt(timeHours)));
     }
 
     public double arrivalRateAt(double timeHours) {

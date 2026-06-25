@@ -3,8 +3,11 @@ package simulator.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ServiceTicket {
+    private static final Logger LOGGER = Logger.getLogger(ServiceTicket.class.getName());
+
     private final int ticketId;
     private final String jobType;
     private final double estimatedLaborTime;
@@ -26,9 +29,9 @@ public class ServiceTicket {
     }
 
     public void printStatus(String stage) {
-        System.out.printf(
-                "[Ticket #%d] %s status=%s labor=%.2fh queueDelay=%.2fh partsDelay=%.2fh%n",
-                ticketId, stage, status, actualLaborTime, queueDelay, partsDelay);
+        LOGGER.info(String.format(
+                "[Ticket #%d] %s status=%s labor=%.2fh queueDelay=%.2fh partsDelay=%.2fh",
+                ticketId, stage, status, actualLaborTime, queueDelay, partsDelay));
     }
 
     public int getTicketId() {

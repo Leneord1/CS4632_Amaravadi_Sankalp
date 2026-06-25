@@ -1,6 +1,10 @@
 package simulator.model;
 
+import java.util.logging.Logger;
+
 public class ServiceAdvisor {
+    private static final Logger LOGGER = Logger.getLogger(ServiceAdvisor.class.getName());
+
     private final int advisorId;
     private boolean isAvailable;
     private Customer currentCustomer;
@@ -21,7 +25,8 @@ public class ServiceAdvisor {
     }
 
     public void printIntake(ServiceTicket ticket) {
-        System.out.printf("[Advisor %d] intake ticket #%d (%s)%n", advisorId, ticket.getTicketId(), ticket.getJobType());
+        LOGGER.info(String.format(
+                "[Advisor %d] intake ticket #%d (%s)", advisorId, ticket.getTicketId(), ticket.getJobType()));
     }
 
     public int getAdvisorId() {

@@ -1,8 +1,11 @@
 package simulator.model;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 public class JobQueue {
+    private static final Logger LOGGER = Logger.getLogger(JobQueue.class.getName());
+
     private final LinkedList<ServiceTicket> queue = new LinkedList<>();
 
     public void enqueue(ServiceTicket ticket) {
@@ -18,7 +21,7 @@ public class JobQueue {
     }
 
     public void printQueueDepth(String label) {
-        System.out.printf("[JobQueue] %s depth=%d%n", label, queue.size());
+        LOGGER.info(String.format("[JobQueue] %s depth=%d", label, queue.size()));
     }
 
     public boolean isEmpty() {

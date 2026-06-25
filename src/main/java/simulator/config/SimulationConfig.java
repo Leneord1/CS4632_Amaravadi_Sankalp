@@ -1,6 +1,9 @@
 package simulator.config;
 
+import java.util.logging.Logger;
+
 public final class SimulationConfig {
+    private static final Logger LOGGER = Logger.getLogger(SimulationConfig.class.getName());
     private final double simulationHorizonHours;
     private final double arrivalRate;
     private final int technicianCount;
@@ -44,10 +47,10 @@ public final class SimulationConfig {
     }
 
     public void printConfig(String label) {
-        System.out.printf(
-                "[Config] %s horizon=%.1fh lambda=%.2f techs=%d mu=%.2f advisors=%d model=%s%n",
+        LOGGER.info(String.format(
+                "[Config] %s horizon=%.1fh lambda=%.2f techs=%d mu=%.2f advisors=%d model=%s",
                 label, simulationHorizonHours, arrivalRate, technicianCount,
-                serviceRatePerTechnician, advisorCount, serviceTimeModel);
+                serviceRatePerTechnician, advisorCount, serviceTimeModel));
     }
 
     public static Builder builder() {

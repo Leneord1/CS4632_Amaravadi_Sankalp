@@ -1,12 +1,13 @@
-#-------------------------------------------------------------------------------#
-#               Qodana analysis is configured by qodana.yaml file               #
-#             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
-#-------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#        Qodana analysis is configured by qodana.yaml file                    #
+#        https://www.jetbrains.com/help/qodana/qodana-yaml.html               #
+#------------------------------------------------------------------------------#
 
-#################################################################################
-#              WARNING: Do not store sensitive information in this file,        #
-#               as its contents will be included in the Qodana report.          #
-#################################################################################
+################################################################################
+#    WARNING: Do not store sensitive information in this file, as its         #
+#    contents will be included in the Qodana report.                          #
+################################################################################
+---
 version: "1.0"
 
 #Specify inspection profile for code analysis
@@ -33,8 +34,8 @@ projectJDK: "23" #(Applied in CI/CD pipeline)
 #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
 
 # Quality gate. Will fail the CI/CD pipeline if any condition is not met
-# severityThresholds - configures maximum thresholds for different problem severities
-# testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
+# severityThresholds - max thresholds for different problem severities
+# testCoverageThresholds - min code coverage on project and new code
 # Code Coverage is available in Ultimate and Ultimate Plus plans
 #failureConditions:
 #  severityThresholds:

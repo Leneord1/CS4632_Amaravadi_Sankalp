@@ -1,6 +1,7 @@
 package simulator;
 
 import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import simulator.config.SimulationConfig;
 import simulator.config.SimulationConfigLoader;
@@ -36,7 +37,7 @@ public class Main {
 
     private static int readInt(Scanner scanner, String label, int minValue) {
         while (true) {
-            System.out.printf("%s [%d]: ", label, minValue);
+            LOGGER.info(String.format("%s [%d]: ", label, minValue));
             if (!scanner.hasNextLine()) {
                 return minValue;
             }
@@ -50,15 +51,17 @@ public class Main {
                     return value;
                 }
             } catch (NumberFormatException ignored) {
-
+                // Ignore non-numeric input and reprompt.
             }
-            System.out.printf("Enter a whole number >= %d.%n", minValue);
+            LOGGER.info(String.format("Enter a whole number >= %d.", minValue));
         }
     }
 
     static void run(SimulationConfig config) {
-        LOGGER.info("Service Department Operational Optimization Simulator");
-        LOGGER.info(formatConfig(config));
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("Service Department Operational Optimization Simulator");
+            LOGGER.info(formatConfig(config));
+        }
 
         SimulationEngine engine = new SimulationEngine(config);
         engine.run();

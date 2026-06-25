@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Logger;
 import simulator.config.SimulationConfig;
 import simulator.model.Part;
 import simulator.model.PartRequirement;
@@ -14,6 +15,8 @@ import simulator.model.ServiceTicket;
 import simulator.model.TicketStatus;
 
 public class PartsDepartment {
+    private static final Logger LOGGER = Logger.getLogger(PartsDepartment.class.getName());
+
     private final PartsInventory inventory;
     private final List<PendingPartOrder> pendingOrders = new ArrayList<>();
     private final List<ServiceTicket> blockedTickets = new ArrayList<>();
@@ -42,9 +45,9 @@ public class PartsDepartment {
     }
 
     public void printStatus(double currentTimeHours) {
-        System.out.printf(
-                "[PartsDept] t=%.2fh pendingOrders=%d blocked=%d avgFulfill=%.2fh%n",
-                currentTimeHours, pendingOrders.size(), blockedTickets.size(), getAverageFulfillmentTimeHours());
+        LOGGER.info(String.format(
+                "[PartsDept] t=%.2fh pendingOrders=%d blocked=%d avgFulfill=%.2fh",
+                currentTimeHours, pendingOrders.size(), blockedTickets.size(), getAverageFulfillmentTimeHours()));
     }
 
     public PartsFulfillmentResult requestPartsForTicket(ServiceTicket ticket, double currentTimeHours) {

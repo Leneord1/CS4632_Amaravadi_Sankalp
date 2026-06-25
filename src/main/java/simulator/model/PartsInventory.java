@@ -4,15 +4,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import simulator.inventory.PartsInventoryEquations;
 
 public class PartsInventory {
+    private static final Logger LOGGER = Logger.getLogger(PartsInventory.class.getName());
+
     private final Map<Integer, Part> partsById = new LinkedHashMap<>();
 
     public void printStockLevel(int partId) {
         Part part = partsById.get(partId);
         int quantity = part == null ? 0 : part.getQuantityOnHand();
-        System.out.printf("[Inventory] part %d on-hand=%d%n", partId, quantity);
+        LOGGER.info(String.format("[Inventory] part %d on-hand=%d", partId, quantity));
     }
 
     public void addPart(Part part) {

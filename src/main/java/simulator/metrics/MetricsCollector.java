@@ -61,7 +61,7 @@ public class MetricsCollector {
         partsDelays.add(ticket.getPartsDelay());
 
         if (ticket.getStatus() == TicketStatus.COMPLETE) {
-            throughputMetrics.recordJobCompletion(ticket);
+            throughputMetrics.recordJobCompletion();
             jobsCompletedPerDay = throughputMetrics.getJobsCompletedPerDay();
             Technician technician = ticket.getAssignedTechnician();
             if (technician != null) {
@@ -91,9 +91,12 @@ public class MetricsCollector {
     }
 
     public void printSnapshot(String label) {
-        System.out.printf(
-                "[Metrics] %s jobsCompleted=%d avgCustomerWait=%.3fh%n",
-                label, throughputMetrics.getRecordedJobs(), customerWaitMetrics.getAverageWaitTime());
+        if (!LOGGER.isLoggable(Level.INFO)) {
+            return;
+        }
+        LOGGER.info(String.format(
+                "[Metrics] %s jobsCompleted=%d avgCustomerWait=%.3fh",
+                label, throughputMetrics.getRecordedJobs(), customerWaitMetrics.getAverageWaitTime()));
     }
 
     public MetricsReport buildReport() {

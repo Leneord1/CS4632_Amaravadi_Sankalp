@@ -1,6 +1,10 @@
 package simulator.model;
 
+import java.util.logging.Logger;
+
 public class Part {
+    private static final Logger LOGGER = Logger.getLogger(Part.class.getName());
+
     private final int partId;
     private final String description;
     private int quantityOnHand;
@@ -24,9 +28,9 @@ public class Part {
     }
 
     public void printAvailability(int requestedQuantity) {
-        System.out.printf(
-                "[Part %d] %s on-hand=%d requested=%d fillable=%b%n",
-                partId, description, quantityOnHand, requestedQuantity, quantityOnHand >= requestedQuantity);
+        LOGGER.info(String.format(
+                "[Part %d] %s on-hand=%d requested=%d fillable=%b",
+                partId, description, quantityOnHand, requestedQuantity, quantityOnHand >= requestedQuantity));
     }
 
     public int getPartId() {
