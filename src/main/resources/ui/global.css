@@ -1,0 +1,54 @@
+/* Global theme shared by every page. Scene-level so all views inherit. */
+
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+/* Base page container. Every view root should add this class. */
+.app-root {
+    -fx-background-color: linear-gradient(to bottom right, #10151f, #1c2636);
+    -fx-padding: 48;
+}
+
+/* Shared typography */
+.app-title {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f5f7fa;
+    -fx-text-alignment: center;
+}
+
+.app-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #9aa7bd;
+    -fx-text-alignment: center;
+}
+
+.app-footer {
+    -fx-font-size: 12px;
+    -fx-text-fill: #5f6c82;
+}
+
+/* Shared button styles */
+.btn {
+    -fx-font-size: 15px;
+    -fx-padding: 12 28 12 28;
+    -fx-background-radius: 8;
+    -fx-background-color: #2a3546;
+    -fx-text-fill: #e6ebf2;
+    -fx-cursor: hand;
+}
+
+.btn:hover {
+    -fx-background-color: #33415a;
+}
+
+.btn.primary {
+    -fx-background-color: #f0a830;
+    -fx-text-fill: #10151f;
+    -fx-font-weight: bold;
+}
+
+.btn.primary:hover {
+    -fx-background-color: #ffbc4a;
+}
