@@ -3,11 +3,29 @@
 skinparam classAttributeIconSize 0
 
 class SimulationEngine {
-    - clock: double
-    - eventQueue: PriorityQueue<Event>
+    - clockHours: double
+    - events: PriorityQueue<Event>
+    - jobQueue: JobQueue
     - partsDepartment: PartsDepartment
-    + run(): void
-    + scheduleEvent(Event): void
+    - metrics: MetricsCollector
+    + run(): MetricsCollector
+    - push(double, EventType, Customer, ServiceTicket): void
+}
+
+' Discrete-event model: ordered by (time, sequence) in the engine's PriorityQueue
+class Event <<record>> {
+    - time: double
+    - type: EventType
+    - sequence: long
+    - customer: Customer
+    - ticket: ServiceTicket
+}
+
+enum EventType {
+    ARRIVAL
+    INTAKE_COMPLETE
+    SERVICE_COMPLETE
+    PARTS_ARRIVAL
 }
 
 class Customer {
@@ -61,6 +79,8 @@ class RepairBay {
     - bayId: int
     - isOccupied: boolean
     - assignedTechnician: Technician
+    + setOccupied(boolean): void
+    + printOccupancy(double): void
 }
 
 class JobQueue {
@@ -94,6 +114,8 @@ class Part {
     - reorderPoint: int
     - reorderQuantity: int
     - meanLeadTimeHours: double
+    + setQuantityOnHand(int): void
+    + printAvailability(int): void
 }
 
 package "Parts Department" {
@@ -131,9 +153,14 @@ package "Parts Department" {
     }
 }
 
+SimulationEngine "1" *-- "many" Event : schedules in PriorityQueue
 SimulationEngine "1" *-- "1" JobQueue
 SimulationEngine "1" *-- "1" MetricsCollector
 SimulationEngine "1" *-- "1" PartsDepartment
+
+Event "1" --> "1" EventType
+Event "many" ..> "0..1" Customer
+Event "many" ..> "0..1" ServiceTicket
 
 PartsDepartment "1" *-- "1" PartsInventory
 PartsDepartment "1" o-- "many" PendingPartOrder

@@ -42,6 +42,7 @@ public final class SimulationConfigLoader {
                 "  --config=<path>                  Optional properties file override",
                 "  --horizon=<hours>                Simulation run length",
                 "  --arrival-rate=<lambda>          Customer arrival rate (vehicles/hour)",
+                "  --arrival-profile=<CONSTANT|DEALERSHIP_DAY>",
                 "  --technicians=<count>            Technician and bay count",
                 "  --service-rate=<mu>              Service rate per technician",
                 "  --advisors=<count>               Service advisor count",
@@ -120,6 +121,7 @@ public final class SimulationConfigLoader {
         applyIntProperty(properties, "serviceTime.maxExperienceLevel", builder::maxExperienceLevel);
         applyDoubleProperty(properties, "serviceTime.gammaShapeParameter", builder::gammaShapeParameter);
         applyEnumProperty(properties, builder::serviceTimeModel);
+        applyArrivalProfileProperty(properties, builder::arrivalProfile);
         applyIntProperty(properties, "parts.reorderPoint", builder::partsReorderPoint);
         applyIntProperty(properties, "parts.reorderQuantity", builder::partsReorderQuantity);
         applyDoubleProperty(properties, "parts.leadTimeHours", builder::partsLeadTimeHours);
@@ -140,6 +142,7 @@ public final class SimulationConfigLoader {
         applyCliInt(options, "max-experience", builder::maxExperienceLevel);
         applyCliDouble(options, "gamma-shape", builder::gammaShapeParameter);
         applyCliEnum(options, builder::serviceTimeModel);
+        applyCliArrivalProfile(options, builder::arrivalProfile);
         applyCliInt(options, "reorder-point", builder::partsReorderPoint);
         applyCliInt(options, "reorder-quantity", builder::partsReorderQuantity);
         applyCliDouble(options, "parts-lead-time", builder::partsLeadTimeHours);
@@ -196,6 +199,13 @@ public final class SimulationConfigLoader {
         }
     }
 
+    private static void applyArrivalProfileProperty(Properties properties, Consumer<ArrivalProfile> setter) {
+        String value = properties.getProperty("simulation.arrivalProfile");
+        if (value != null) {
+            setter.accept(ArrivalProfile.valueOf(value.trim().toUpperCase()));
+        }
+    }
+
     private static void applyCliDouble(Map<String, String> options, String key, DoubleConsumer setter) {
         String value = options.get(key);
         if (value != null) {
@@ -221,6 +231,13 @@ public final class SimulationConfigLoader {
         String value = options.get("service-time-model");
         if (value != null) {
             setter.accept(ServiceTimeModel.valueOf(value.trim().toUpperCase()));
+        }
+    }
+
+    private static void applyCliArrivalProfile(Map<String, String> options, Consumer<ArrivalProfile> setter) {
+        String value = options.get("arrival-profile");
+        if (value != null) {
+            setter.accept(ArrivalProfile.valueOf(value.trim().toUpperCase()));
         }
     }
 }

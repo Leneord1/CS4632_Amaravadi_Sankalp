@@ -21,6 +21,24 @@ public class PiecewiseConstantArrivalRate implements ArrivalRateFunction {
                 new double[] {8.0, 6.0, 4.0, 2.0, 3.0, 5.0, 3.0});
     }
 
+    public PiecewiseConstantArrivalRate scaledToMeanRate(double targetMeanRate, double horizonHours) {
+        if (horizonHours <= 0.0) {
+            throw new IllegalArgumentException("horizonHours must be positive");
+        }
+
+        double currentMean = integratedRate(0.0, horizonHours) / horizonHours;
+        if (currentMean <= 0.0) {
+            return this;
+        }
+
+        double factor = targetMeanRate / currentMean;
+        double[] scaledRates = new double[segmentRates.length];
+        for (int i = 0; i < segmentRates.length; i++) {
+            scaledRates[i] = segmentRates[i] * factor;
+        }
+        return new PiecewiseConstantArrivalRate(segmentStartsHours, scaledRates);
+    }
+
     @Override
     public double rateAt(double timeHours) {
         int index = 0;

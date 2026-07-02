@@ -33,7 +33,7 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - 5. If not, then install a version newer then 3.13
 - 6. Download the project from GitHub
 - 7. Open the project in the preferred IDE
-- 8. Build the project with the command "mvn build" in the IDE's terminal
+- 8. Build the project with the command "mvn compile" in the IDE's terminal
 - 9. Run the simulation by running the file named main
 
 ### Dependencies and Versions
@@ -50,7 +50,7 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - 5. If not, then install a version newer then 3.13
 - 6. Download the project from GitHub
 - 7. Open the project in the preferred IDE
-- 8. Build the project with the command "mvn build" in the IDE's terminal
+- 8. Build the project with the command "mvn compile" in the IDE's terminal
 - 9. Run the simulation by running the file named main
 - 10. Once the simulation is running, enter how many technicians, advisors and customers you have for the day
 - 11. Press enter and get the relavent information printed back

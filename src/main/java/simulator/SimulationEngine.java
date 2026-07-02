@@ -24,7 +24,6 @@ import simulator.model.TicketStatus;
 import simulator.stochastic.CoxProcess;
 import simulator.stochastic.GammaDistribution;
 import simulator.stochastic.PiecewiseConstantArrivalRate;
-import simulator.stochastic.PoissonDistribution;
 import simulator.stochastic.ServiceTimeEquations;
 
 public class SimulationEngine {
@@ -62,15 +61,20 @@ public class SimulationEngine {
     public SimulationEngine(SimulationConfig config) {
         this.config = config;
         this.random = new Random(config.getRandomSeed());
-        this.coxProcess = new CoxProcess(
-                new PiecewiseConstantArrivalRate(
-                        new double[] {0.0},
-                        new double[] {config.getArrivalRate()}),
-                random,
-                1.0);
+        this.coxProcess = new CoxProcess(buildArrivalRate(config), random, 1.0);
         this.partsDepartment = PartsDepartment.fromConfig(config);
         buildResources();
         metrics.configureSimulation(config);
+    }
+
+    private static PiecewiseConstantArrivalRate buildArrivalRate(SimulationConfig config) {
+        return switch (config.getArrivalProfile()) {
+            case CONSTANT -> new PiecewiseConstantArrivalRate(
+                    new double[] {0.0},
+                    new double[] {config.getArrivalRate()});
+            case DEALERSHIP_DAY -> PiecewiseConstantArrivalRate.defaultDealershipDay()
+                    .scaledToMeanRate(config.getArrivalRate(), config.getSimulationHorizonHours());
+        };
     }
 
     public MetricsCollector run() {
@@ -109,25 +113,13 @@ public class SimulationEngine {
     }
 
     private void scheduleArrivals() {
-        if (config.getCustomerCount() > 0) {
-            scheduleFixedArrivals(config.getCustomerCount());
-            return;
-        }
-
-        int maxArrivals = (int) Math.ceil(config.getArrivalRate() * config.getSimulationHorizonHours() * 3) + 10;
+        int maxArrivals = config.getCustomerCount() > 0
+                ? config.getCustomerCount()
+                : (int) Math.ceil(config.getArrivalRate() * config.getSimulationHorizonHours() * 3) + 10;
         List<Customer> arrivals =
                 coxProcess.generateArrivals(0.0, config.getSimulationHorizonHours(), maxArrivals);
         for (Customer customer : arrivals) {
             push(customer.getArrivalTime(), EventType.ARRIVAL, customer, null);
-        }
-    }
-
-    private void scheduleFixedArrivals(int customerCount) {
-        double arrivalTime = 0.0;
-        for (int i = 0; i < customerCount; i++) {
-            arrivalTime += PoissonDistribution.sampleExponentialInterArrival(random, config.getArrivalRate());
-            Customer customer = new Customer(arrivalTime);
-            push(arrivalTime, EventType.ARRIVAL, customer, null);
         }
     }
 

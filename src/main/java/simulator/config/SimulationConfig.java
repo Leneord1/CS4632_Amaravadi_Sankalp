@@ -21,6 +21,7 @@ public final class SimulationConfig {
     private final int replicationCount;
     private final long randomSeed;
     private final ServiceTimeModel serviceTimeModel;
+    private final ArrivalProfile arrivalProfile;
 
     private SimulationConfig(Builder builder) {
         this.simulationHorizonHours = builder.simulationHorizonHours;
@@ -40,6 +41,7 @@ public final class SimulationConfig {
         this.replicationCount = builder.replicationCount;
         this.randomSeed = builder.randomSeed;
         this.serviceTimeModel = builder.serviceTimeModel;
+        this.arrivalProfile = builder.arrivalProfile;
     }
 
     public static SimulationConfig defaults() {
@@ -48,8 +50,8 @@ public final class SimulationConfig {
 
     public void printConfig(String label) {
         LOGGER.info(String.format(
-                "[Config] %s horizon=%.1fh lambda=%.2f techs=%d mu=%.2f advisors=%d model=%s",
-                label, simulationHorizonHours, arrivalRate, technicianCount,
+                "[Config] %s horizon=%.1fh lambda=%.2f arrival=%s techs=%d mu=%.2f advisors=%d model=%s",
+                label, simulationHorizonHours, arrivalRate, arrivalProfile, technicianCount,
                 serviceRatePerTechnician, advisorCount, serviceTimeModel));
     }
 
@@ -57,7 +59,6 @@ public final class SimulationConfig {
         return new Builder();
     }
 
-    // Copies all fields into a new builder so individual settings can be overridden.
     public Builder toBuilder() {
         return new Builder()
                 .simulationHorizonHours(simulationHorizonHours)
@@ -76,7 +77,8 @@ public final class SimulationConfig {
                 .validationRelativeTolerance(validationRelativeTolerance)
                 .replicationCount(replicationCount)
                 .randomSeed(randomSeed)
-                .serviceTimeModel(serviceTimeModel);
+                .serviceTimeModel(serviceTimeModel)
+                .arrivalProfile(arrivalProfile);
     }
 
     public double getSimulationHorizonHours() {
@@ -147,6 +149,10 @@ public final class SimulationConfig {
         return serviceTimeModel;
     }
 
+    public ArrivalProfile getArrivalProfile() {
+        return arrivalProfile;
+    }
+
     public double getMeanServiceTimeHours() {
         if (serviceRatePerTechnician <= 0.0) {
             return 0.0;
@@ -172,6 +178,7 @@ public final class SimulationConfig {
         private int replicationCount = 1;
         private long randomSeed = 42L;
         private ServiceTimeModel serviceTimeModel = ServiceTimeModel.PDF;
+        private ArrivalProfile arrivalProfile = ArrivalProfile.DEALERSHIP_DAY;
 
         public Builder simulationHorizonHours(double simulationHorizonHours) {
             this.simulationHorizonHours = simulationHorizonHours;
@@ -255,6 +262,11 @@ public final class SimulationConfig {
 
         public Builder serviceTimeModel(ServiceTimeModel serviceTimeModel) {
             this.serviceTimeModel = serviceTimeModel;
+            return this;
+        }
+
+        public Builder arrivalProfile(ArrivalProfile arrivalProfile) {
+            this.arrivalProfile = arrivalProfile;
             return this;
         }
 
