@@ -3,8 +3,6 @@ package simulator.data;
 import java.util.ArrayList;
 import java.util.List;
 
-// In-memory buffer for per-run time-series and event data.
-// The engine appends here during a run; writers flush it to disk afterwards.
 public class DataRecorder {
     private final List<TimeSeriesSample> samples = new ArrayList<>();
     private final List<EventRecord> events = new ArrayList<>();

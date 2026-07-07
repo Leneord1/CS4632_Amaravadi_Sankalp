@@ -1,6 +1,5 @@
 package simulator.data;
 
-// One periodic snapshot of system state during a run (M3 time-series data).
 public record TimeSeriesSample(
         long realEpochMillis,
         double simTimeHours,

@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-// Writes buffered time-series and event data to CSV files.
 public final class CsvWriter {
 
     private CsvWriter() {
@@ -35,7 +34,6 @@ public final class CsvWriter {
         }
     }
 
-    // Quotes a field when it contains a comma, quote, or newline (RFC 4180 style).
     public static String escape(String field) {
         if (field == null) {
             return "";

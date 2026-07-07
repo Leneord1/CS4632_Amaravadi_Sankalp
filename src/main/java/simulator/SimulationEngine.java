@@ -2,6 +2,7 @@ package simulator;
 
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
@@ -10,12 +11,16 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Random;
 import simulator.config.SimulationConfig;
+import simulator.data.DataRecorder;
+import simulator.data.EventRecord;
+import simulator.data.TimeSeriesSample;
 import simulator.inventory.PartsDepartment;
 import simulator.inventory.PartsFulfillmentResult;
 import simulator.inventory.PendingPartOrder;
 import simulator.metrics.MetricsCollector;
 import simulator.model.Customer;
 import simulator.model.JobQueue;
+import simulator.model.Part;
 import simulator.model.RepairBay;
 import simulator.model.ServiceAdvisor;
 import simulator.model.ServiceTicket;
@@ -29,9 +34,10 @@ import simulator.stochastic.ServiceTimeEquations;
 public class SimulationEngine {
     private static final double ADVISOR_INTAKE_HOURS = 0.1;
     private static final double PARTS_REQUIREMENT_PROBABILITY = 0.4;
+    private static final double SNAPSHOT_INTERVAL_HOURS = 0.25;
     private static final String[] JOB_TYPES = {"Oil Change", "Brake Service", "Diagnostics", "Transmission"};
 
-    private enum EventType { ARRIVAL, INTAKE_COMPLETE, SERVICE_COMPLETE, PARTS_ARRIVAL }
+    private enum EventType { ARRIVAL, INTAKE_COMPLETE, SERVICE_COMPLETE, PARTS_ARRIVAL, SNAPSHOT }
 
     private record Event(double time, EventType type, long sequence, Customer customer, ServiceTicket ticket) {
     }
@@ -42,10 +48,12 @@ public class SimulationEngine {
     private final JobQueue jobQueue = new JobQueue();
     private final PartsDepartment partsDepartment;
     private final MetricsCollector metrics = new MetricsCollector();
+    private final DataRecorder recorder;
 
     private final Deque<ServiceAdvisor> freeAdvisors = new ArrayDeque<>();
     private final Deque<Technician> freeTechnicians = new ArrayDeque<>();
     private final Deque<Customer> intakeWaitQueue = new ArrayDeque<>();
+    private final List<Technician> allTechnicians = new ArrayList<>();
 
     private final PriorityQueue<Event> events =
             new PriorityQueue<>(Comparator.comparingDouble((Event e) -> e.time).thenComparingLong(e -> e.sequence));
@@ -59,7 +67,12 @@ public class SimulationEngine {
     private double clockHours;
 
     public SimulationEngine(SimulationConfig config) {
+        this(config, null);
+    }
+
+    public SimulationEngine(SimulationConfig config, DataRecorder recorder) {
         this.config = config;
+        this.recorder = recorder;
         this.random = new Random(config.getRandomSeed());
         this.coxProcess = new CoxProcess(buildArrivalRate(config), random, 1.0);
         this.partsDepartment = PartsDepartment.fromConfig(config);
@@ -80,6 +93,7 @@ public class SimulationEngine {
     public MetricsCollector run() {
         config.printConfig("run start");
         scheduleArrivals();
+        scheduleSnapshots();
 
         while (!events.isEmpty()) {
             Event event = events.poll();
@@ -89,6 +103,7 @@ public class SimulationEngine {
                 case INTAKE_COMPLETE -> handleIntakeComplete(event);
                 case SERVICE_COMPLETE -> handleServiceComplete(event);
                 case PARTS_ARRIVAL -> handlePartsArrival(event);
+                case SNAPSHOT -> handleSnapshot(event);
                 default -> throw new IllegalStateException("Unknown event type");
             }
         }
@@ -109,6 +124,17 @@ public class SimulationEngine {
             technician.setAssignedBay(bay);
             bay.setAssignedTechnician(technician);
             freeTechnicians.add(technician);
+            allTechnicians.add(technician);
+        }
+    }
+
+    private void scheduleSnapshots() {
+        if (recorder == null) {
+            return;
+        }
+        double horizon = config.getSimulationHorizonHours();
+        for (double t = 0.0; t <= horizon + 1.0e-9; t += SNAPSHOT_INTERVAL_HOURS) {
+            push(t, EventType.SNAPSHOT, null, null);
         }
     }
 
@@ -127,6 +153,7 @@ public class SimulationEngine {
         coxProcess.printRate(event.time);
         event.customer.printArrival(event.time);
         intakeWaitQueue.add(event.customer);
+        recordEvent(event.time, "ARRIVAL", null, "customer arrival");
         tryStartIntakes(event.time);
     }
 
@@ -168,8 +195,10 @@ public class SimulationEngine {
         partsDepartment.printStatus(event.time);
         if (result.isFulfilled()) {
             enqueueReadyTicket(event.ticket, event.time);
+            recordEvent(event.time, "INTAKE_COMPLETE", event.ticket, "ready for service");
         } else {
             event.ticket.printStatus("blocked on parts");
+            recordEvent(event.time, "INTAKE_COMPLETE", event.ticket, "blocked on parts");
         }
         schedulePartsArrival();
 
@@ -231,6 +260,7 @@ public class SimulationEngine {
 
         ticket.printStatus("complete");
         metrics.recordTicket(ticket);
+        recordEvent(event.time, "SERVICE_COMPLETE", ticket, "job complete");
 
         Customer customer = customerByTicket.get(ticket);
         double advisorWait = advisorWaitByCustomer.getOrDefault(customer, 0.0);
@@ -247,6 +277,7 @@ public class SimulationEngine {
             ticket.printStatus("parts received");
             enqueueReadyTicket(ticket, event.time);
         }
+        recordEvent(event.time, "PARTS_ARRIVAL", null, "released=" + released.size());
         schedulePartsArrival();
         tryStartService(event.time);
     }
@@ -277,5 +308,47 @@ public class SimulationEngine {
 
     private void push(double time, EventType type, Customer customer, ServiceTicket ticket) {
         events.add(new Event(time, type, eventSequence++, customer, ticket));
+    }
+
+    private void handleSnapshot(Event event) {
+        if (recorder == null) {
+            return;
+        }
+        int busyTechnicians = 0;
+        int busyBays = 0;
+        for (Technician technician : allTechnicians) {
+            if (!technician.isAvailable()) {
+                busyTechnicians++;
+            }
+            RepairBay bay = technician.getAssignedBay();
+            if (bay != null && bay.isOccupied()) {
+                busyBays++;
+            }
+        }
+        recorder.recordSample(new TimeSeriesSample(
+                System.currentTimeMillis(),
+                event.time,
+                intakeWaitQueue.size(),
+                jobQueue.size(),
+                busyTechnicians,
+                busyBays,
+                partsOnHand(),
+                metrics.getThroughputMetrics().getRecordedJobs()));
+    }
+
+    private void recordEvent(double time, String type, ServiceTicket ticket, String detail) {
+        if (recorder == null) {
+            return;
+        }
+        int ticketId = ticket == null ? -1 : ticket.getTicketId();
+        recorder.recordEvent(new EventRecord(time, type, ticketId, detail));
+    }
+
+    private int partsOnHand() {
+        int total = 0;
+        for (Part part : partsDepartment.getInventory().getParts()) {
+            total += part.getQuantityOnHand();
+        }
+        return total;
     }
 }

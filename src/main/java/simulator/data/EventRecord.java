@@ -1,7 +1,5 @@
 package simulator.data;
 
-// One discrete event captured during a run (M3 event data).
-// ticketId is -1 when the event is not tied to a ticket (e.g. parts arrival).
 public record EventRecord(
         double simTimeHours,
         String eventType,

@@ -16,9 +16,6 @@ import simulator.metrics.ValidationReport;
 import simulator.model.RepairBay;
 import simulator.model.Technician;
 
-// Writes the four M3 output files per run into a timestamped session folder
-// (run_XXX_timeseries.csv, _events.csv, _summary.json, _config.json) and
-// appends each run to a shared master_index.csv.
 public final class RunResultWriter {
     private static final DateTimeFormatter DIR_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
     private static final String MASTER_INDEX = "master_index.csv";

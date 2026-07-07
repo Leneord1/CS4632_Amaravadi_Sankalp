@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-// Minimal dependency-free JSON object builder for summary/config exports.
-// Numbers use Double/Long/Integer.toString (locale-independent); strings are escaped.
 public final class JsonWriter {
 
     private JsonWriter() {
