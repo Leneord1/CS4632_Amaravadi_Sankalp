@@ -20,7 +20,6 @@ public final class JsonWriter {
         Files.writeString(path, json, StandardCharsets.UTF_8);
     }
 
-    // Escapes a string and wraps it in double quotes for JSON output.
     static String quote(String value) {
         if (value == null) {
             return "null";
@@ -42,7 +41,6 @@ public final class JsonWriter {
         return builder.toString();
     }
 
-    // Ordered JSON object; each value is stored as a raw JSON fragment.
     public static final class JsonObject {
         private final Map<String, String> entries = new LinkedHashMap<>();
 
@@ -76,7 +74,6 @@ public final class JsonWriter {
             return this;
         }
 
-        // Renders the object as pretty-printed JSON with two-space indentation.
         public String toJson(int indentLevel) {
             String pad = "  ".repeat(indentLevel + 1);
             String closePad = "  ".repeat(indentLevel);

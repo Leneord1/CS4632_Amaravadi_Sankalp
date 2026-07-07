@@ -90,7 +90,7 @@ public class SimulationEngine {
         };
     }
 
-    public MetricsCollector run() {
+    public void run() {
         config.printConfig("run start");
         scheduleArrivals();
         scheduleSnapshots();
@@ -110,7 +110,6 @@ public class SimulationEngine {
 
         metrics.printSnapshot("run end");
         metrics.report();
-        return metrics;
     }
 
     private void buildResources() {

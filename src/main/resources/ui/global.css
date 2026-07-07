@@ -1,10 +1,10 @@
-/* Global theme shared by every page. Scene-level so all views inherit. */
+/* Global theme shared by every page.  */
 
 .root {
     -fx-font-family: "Segoe UI", "Helvetica Neue", sans-serif;
 }
 
-/* Base page container. Every view root should add this class. */
+/* Base page container */
 .app-root {
     -fx-background-color: linear-gradient(to bottom right, #10151f, #1c2636);
     -fx-padding: 48;

@@ -31,7 +31,6 @@ public final class RunResultWriter {
         this.masterIndex = sessionDir.resolve(MASTER_INDEX);
     }
 
-    // Creates results/run_<timestamp>/ and seeds the master index header.
     public static RunResultWriter createSession(Path resultsRoot) throws IOException {
         String timestamp = LocalDateTime.now().format(DIR_FORMAT);
         Path sessionDir = resultsRoot.resolve("run_" + timestamp);
@@ -45,7 +44,6 @@ public final class RunResultWriter {
         return sessionDir;
     }
 
-    // Writes all artifacts for a single run and records it in the master index.
     public String writeRun(
             int runId,
             String purpose,
@@ -67,7 +65,6 @@ public final class RunResultWriter {
         return base;
     }
 
-    // Aggregate statistics for one run.
     private static JsonObject buildSummaryJson(
             int runId, String purpose, long wallClockMillis, MetricsReport report) {
         JsonObject techUtil = JsonWriter.object();
@@ -107,7 +104,6 @@ public final class RunResultWriter {
         return summary;
     }
 
-    // Exact parameter set used for the run (supports reproducibility).
     private static JsonObject buildConfigJson(SimulationConfig config) {
         return JsonWriter.object()
                 .put("randomSeed", config.getRandomSeed())

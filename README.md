@@ -28,13 +28,13 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 ## Installation Instructions
 - 1. Open preferred Command-Line Interface (CLI)
 1. Enter "java -version" and verify that the version installed is newer then JDK 17
-1. If JDK is older then 17 is installed, download and install JDK 17 or newer
-1. Enter "mvn -version" and verify that 3.13 or newer is installed
-1. If not, then install a version newer then 3.13
-1. Download the project from GitHub
-1. Open the project in the preferred IDE
-1. Build the project with the command "mvn compile" in the IDE's terminal
-1. Run the simulation by running the file named main
+2. If JDK is older then 17 is installed, download and install JDK 17 or newer
+3. Enter "mvn -version" and verify that 3.13 or newer is installed
+4. If not, then install a version newer then 3.13
+5. Download the project from GitHub
+6. Open the project in the preferred IDE
+7. Build the project with the command "mvn compile" in the IDE's terminal
+8. Run the simulation by running the file named main
 
 ### Dependencies and Versions
 - Java 17
@@ -45,15 +45,15 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 ### Step-by-Step Setup Guide
 - 1. Open preferred Command-Line Interface (CLI)
 1. Enter "java -version" and verify that the version installed is newer then JDK 17
-1. If JDK is older then 17 is installed, download and install JDK 17 or newer
-1. Enter "mvn -version" and verify that 3.13 or newer is installed
-1. If not, then install a version newer then 3.13
-1. Download the project from GitHub
-1. Open the project in the preferred IDE
-1. Build the project with the command "mvn compile" in the IDE's terminal
-1. Run the simulation by running the file named main
-1. Once the simulation is running, enter how many technicians, advisors and customers you have for the day
-1. Press enter and get the relavent information printed back
+2. If JDK is older then 17 is installed, download and install JDK 17 or newer
+3. Enter "mvn -version" and verify that 3.13 or newer is installed
+4. If not, then install a version newer then 3.13
+5. Download the project from GitHub
+6. Open the project in the preferred IDE
+7. Build the project with the command "mvn compile" in the IDE's terminal
+8. Run the simulation by running the file named main
+9. Once the simulation is running, enter how many technicians, advisors and customers you have for the day
+10. Press enter and get the relavent information printed back
 
 ### Troubleshooting Common Issues
 - If "java" or "mvn" is not recognized, confirm JDK 17 and Maven are installed and added to your system PATH
@@ -66,9 +66,9 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 ### How to Run the Simulation
 - 1. Open a terminal in the project folder
 1. Build the project with "mvn compile"
-1. Run "java -cp target/classes simulator.Main"
-1. Enter the number of technicians, advisors, and customers when prompted, or press enter to keep the default values
-1. Review the simulation results printed to the console
+2. Run "java -cp target/classes simulator.Main"
+3. Enter the number of technicians, advisors, and customers when prompted, or press enter to keep the default values
+4. Review the simulation results printed to the console
 
 A graphical user interface is still in development. Until the UI is complete, the simulation is run from the command line or IDE as described above.
 

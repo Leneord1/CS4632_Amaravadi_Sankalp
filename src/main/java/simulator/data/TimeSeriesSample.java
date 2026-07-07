@@ -15,7 +15,6 @@ public record TimeSeriesSample(
                 + "busy_technicians,busy_bays,parts_on_hand,jobs_completed";
     }
 
-    // Row order must match csvHeader().
     public String toCsvRow() {
         return realEpochMillis + ","
                 + simTimeHours + ","
