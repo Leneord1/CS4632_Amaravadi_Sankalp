@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import simulator.config.SimulationConfig;
@@ -32,7 +33,7 @@ public final class RunResultWriter {
     }
 
     public static RunResultWriter createSession(Path resultsRoot) throws IOException {
-        String timestamp = LocalDateTime.now().format(DIR_FORMAT);
+        String timestamp = LocalDateTime.now(ZoneId.systemDefault()).format(DIR_FORMAT);
         Path sessionDir = resultsRoot.resolve("run_" + timestamp);
         Files.createDirectories(sessionDir);
         RunResultWriter writer = new RunResultWriter(sessionDir);

@@ -98,6 +98,14 @@ public class ConfigView implements View {
         runButton.setDisable(true);
         statusLabel.setText("Running simulation...");
 
+        Task<RunResult> task = getRunResultTask(config);
+
+        Thread worker = new Thread(task, "simulation-run");
+        worker.setDaemon(true);
+        worker.start();
+    }
+
+    private Task<RunResult> getRunResultTask(SimulationConfig config) {
         Task<RunResult> task = new Task<>() {
 
             @Override
@@ -116,10 +124,7 @@ public class ConfigView implements View {
             Throwable error = task.getException();
             statusLabel.setText("Run failed: " + (error == null ? "unknown error" : error.getMessage()));
         });
-
-        Thread worker = new Thread(task, "simulation-run");
-        worker.setDaemon(true);
-        worker.start();
+        return task;
     }
 
     private SimulationConfig buildConfig() {
