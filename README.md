@@ -12,12 +12,13 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - Core Discrete Event Simulation (DES) engine
 - Basic service department model and queue management
 - Console output for simulation results
-
-### What's Still to Come
 - **UI Wireframes**: Design sketches for user interface components
 - **UI Implementation**: Complete graphical user interface for simulation visualization
 - **Experience-Based Service Times**: Enhanced modeling of technician skill progression affecting service duration
+
+### What's Still to Come
 - **Comprehensive Testing**: Full test suite for all simulation features
+- **Reports**: Build the logic for the to send the information to a pdf
 - **Real-World Validation**: Testing with actual automotive service department metrics and performance data
 
 ### Milestone Progress
@@ -44,16 +45,16 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 
 ### Step-by-Step Setup Guide
 - 1. Open preferred Command-Line Interface (CLI)
-1. Enter "java -version" and verify that the version installed is newer then JDK 17
-2. If JDK is older then 17 is installed, download and install JDK 17 or newer
-3. Enter "mvn -version" and verify that 3.13 or newer is installed
-4. If not, then install a version newer then 3.13
-5. Download the project from GitHub
-6. Open the project in the preferred IDE
-7. Build the project with the command "mvn compile" in the IDE's terminal
-8. Run the simulation by running the file named main
-9. Once the simulation is running, enter how many technicians, advisors and customers you have for the day
-10. Press enter and get the relavent information printed back
+- 2. Enter "java -version" and verify that the version installed is newer then JDK 17
+-  3. If JDK is older then 17 is installed, download and install JDK 17 or newer
+   4. Enter "mvn -version" and verify that 3.13 or newer is installed
+   5. If not, then install a version newer then 3.13
+   6. Download the project from GitHub
+   7. Open the project in the preferred IDE
+   8. Compile the project with the command "mvn compile" in the IDE's terminal
+   9. Run the simulation by using the command "mvn javafx:run"
+   10. Once the simulation is running, enter how many technicians, advisors and customers you have for the day
+   11. Press enter and get the relavent information printed back
 
 ### Troubleshooting Common Issues
 - If "java" or "mvn" is not recognized, confirm JDK 17 and Maven are installed and added to your system PATH
