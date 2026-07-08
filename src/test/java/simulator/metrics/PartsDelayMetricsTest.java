@@ -1,11 +1,12 @@
 package simulator.metrics;
 
-import org.junit.jupiter.api.Test;
-import simulator.model.ServiceTicket;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
+import simulator.model.ServiceTicket;
 
 class PartsDelayMetricsTest {
 
@@ -39,8 +40,8 @@ class PartsDelayMetricsTest {
         assertEquals(4.0, metrics.getTotalPartsDelay(), 1e-9);
         assertEquals(2.0, metrics.getAveragePartsDelay(), 1e-9);
 
-        double expectedTotalJob = MetricsEquations.totalJobDelay(0.5, 1.0)
-                + MetricsEquations.totalJobDelay(1.5, 3.0);
+        double expectedTotalJob =
+                MetricsEquations.totalJobDelay(0.5, 1.0) + MetricsEquations.totalJobDelay(1.5, 3.0);
         assertEquals(expectedTotalJob / 2.0, metrics.getAverageTotalJobDelay(), 1e-9);
         assertEquals(2, metrics.getPartsDelays().size());
     }

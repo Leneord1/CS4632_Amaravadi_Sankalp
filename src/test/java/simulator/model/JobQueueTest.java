@@ -1,11 +1,11 @@
 package simulator.model;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 class JobQueueTest {
     @Test
@@ -18,7 +18,8 @@ class JobQueueTest {
     @Test
     void dequeueReturnsTicketsInFifoOrder() {
         JobQueue queue = new JobQueue();
-        ServiceTicket first = new ServiceTicket(1, "Brakes: Front Brake Pad R&R, Rotor Resurface", 2.5, 2.3);
+        ServiceTicket first =
+                new ServiceTicket(1, "Brakes: Front Brake Pad R&R, Rotor Resurface", 2.5, 2.3);
         ServiceTicket second = new ServiceTicket(2, "Wheel: 4 Tires R&R", 2.0, 1.5);
         queue.enqueue(first);
         queue.enqueue(second);

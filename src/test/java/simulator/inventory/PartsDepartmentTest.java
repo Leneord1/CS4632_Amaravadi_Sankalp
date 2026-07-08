@@ -1,17 +1,19 @@
 package simulator.inventory;
 
-import java.util.List;
-import java.util.Random;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
+
 import simulator.config.SimulationConfig;
 import simulator.model.Part;
 import simulator.model.PartsInventory;
 import simulator.model.ServiceTicket;
 import simulator.model.TicketStatus;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.List;
+import java.util.Random;
 
 class PartsDepartmentTest {
     @Test
@@ -69,13 +71,14 @@ class PartsDepartmentTest {
 
     @Test
     void buildsFromSimulationConfig() {
-        SimulationConfig config = SimulationConfig.builder()
-                .initialPartsQuantityOnHand(15)
-                .partsReorderPoint(4)
-                .partsReorderQuantity(8)
-                .partsLeadTimeHours(1.5)
-                .randomSeed(9L)
-                .build();
+        SimulationConfig config =
+                SimulationConfig.builder()
+                        .initialPartsQuantityOnHand(15)
+                        .partsReorderPoint(4)
+                        .partsReorderQuantity(8)
+                        .partsLeadTimeHours(1.5)
+                        .randomSeed(9L)
+                        .build();
 
         PartsDepartment department = PartsDepartment.fromConfig(config);
 

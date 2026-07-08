@@ -15,7 +15,9 @@ public class RepairBay {
     }
 
     public void printOccupancy(double currentTimeHours) {
-        LOGGER.info(String.format("[Bay %d] occupied=%b at t=%.2fh", bayId, isOccupied, currentTimeHours));
+        LOGGER.info(
+                String.format(
+                        "[Bay %d] occupied=%b at t=%.2fh", bayId, isOccupied, currentTimeHours));
     }
 
     public int getBayId() {

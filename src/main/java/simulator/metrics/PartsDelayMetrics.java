@@ -1,9 +1,10 @@
 package simulator.metrics;
 
+import simulator.model.ServiceTicket;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import simulator.model.ServiceTicket;
 
 public class PartsDelayMetrics {
     private final List<Double> partsDelays = new ArrayList<>();
@@ -18,7 +19,8 @@ public class PartsDelayMetrics {
     }
 
     public void recordTotalJobDelay(ServiceTicket ticket) {
-        totalJobDelay += MetricsEquations.totalJobDelay(ticket.getQueueDelay(), ticket.getPartsDelay());
+        totalJobDelay +=
+                MetricsEquations.totalJobDelay(ticket.getQueueDelay(), ticket.getPartsDelay());
     }
 
     public double getAveragePartsDelay() {

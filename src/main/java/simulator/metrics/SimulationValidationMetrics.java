@@ -33,19 +33,18 @@ public class SimulationValidationMetrics {
         ValidationReport validationReport = new ValidationReport();
         validationReport.setValidationTolerance(relativeTolerance);
 
-        double analyticalUtilization = queueBenchmarkMetrics.calculateSystemUtilization(
-                arrivalRate,
-                technicianCount,
-                serviceRatePerTechnician);
-        double analyticalQueueWait = queueBenchmarkMetrics.calculateExpectedQueueWait(
-                arrivalRate,
-                technicianCount,
-                serviceRatePerTechnician);
-        double analyticalCustomerWait = MetricsEquations.totalCustomerWaitTime(
-                averageAdvisorWaitTime,
-                analyticalQueueWait,
-                simulatedReport.getAveragePartsDelay(),
-                averageServiceTime);
+        double analyticalUtilization =
+                queueBenchmarkMetrics.calculateSystemUtilization(
+                        arrivalRate, technicianCount, serviceRatePerTechnician);
+        double analyticalQueueWait =
+                queueBenchmarkMetrics.calculateExpectedQueueWait(
+                        arrivalRate, technicianCount, serviceRatePerTechnician);
+        double analyticalCustomerWait =
+                MetricsEquations.totalCustomerWaitTime(
+                        averageAdvisorWaitTime,
+                        analyticalQueueWait,
+                        simulatedReport.getAveragePartsDelay(),
+                        averageServiceTime);
 
         double simulatedUtilization = simulatedReport.getSimulatedShopTechnicianUtilization();
         double simulatedQueueWait = simulatedReport.getAverageQueueDelay();
@@ -57,9 +56,7 @@ public class SimulationValidationMetrics {
                 MetricsEquations.relativeError(simulatedUtilization, analyticalUtilization));
         validationReport.setUtilizationWithinTolerance(
                 MetricsEquations.withinRelativeTolerance(
-                        simulatedUtilization,
-                        analyticalUtilization,
-                        relativeTolerance));
+                        simulatedUtilization, analyticalUtilization, relativeTolerance));
 
         validationReport.setSimulatedQueueWait(simulatedQueueWait);
         validationReport.setAnalyticalQueueWait(analyticalQueueWait);
@@ -67,9 +64,7 @@ public class SimulationValidationMetrics {
                 MetricsEquations.relativeError(simulatedQueueWait, analyticalQueueWait));
         validationReport.setQueueWaitWithinTolerance(
                 MetricsEquations.withinRelativeTolerance(
-                        simulatedQueueWait,
-                        analyticalQueueWait,
-                        relativeTolerance));
+                        simulatedQueueWait, analyticalQueueWait, relativeTolerance));
 
         validationReport.setSimulatedCustomerWait(simulatedCustomerWait);
         validationReport.setAnalyticalCustomerWaitEstimate(analyticalCustomerWait);
@@ -77,9 +72,7 @@ public class SimulationValidationMetrics {
                 MetricsEquations.relativeError(simulatedCustomerWait, analyticalCustomerWait));
         validationReport.setCustomerWaitWithinTolerance(
                 MetricsEquations.withinRelativeTolerance(
-                        simulatedCustomerWait,
-                        analyticalCustomerWait,
-                        relativeTolerance));
+                        simulatedCustomerWait, analyticalCustomerWait, relativeTolerance));
 
         validationReport.setOverallValid(
                 validationReport.isUtilizationWithinTolerance()
@@ -96,12 +89,6 @@ public class SimulationValidationMetrics {
         scenarioReport.setAverageCustomerWaitTime(2.722);
 
         return validateAgainstQueueBenchmark(
-                scenarioReport,
-                4.0,
-                3,
-                2.0,
-                0.5,
-                2.0,
-                DEFAULT_RELATIVE_TOLERANCE);
+                scenarioReport, 4.0, 3, 2.0, 0.5, 2.0, DEFAULT_RELATIVE_TOLERANCE);
     }
 }

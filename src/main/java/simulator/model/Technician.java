@@ -3,6 +3,7 @@ package simulator.model;
 import simulator.config.ServiceTimeModel;
 import simulator.config.SimulationConfig;
 import simulator.stochastic.ServiceTimeEquations;
+
 import java.util.logging.Logger;
 
 @SuppressWarnings("ALL")
@@ -43,18 +44,17 @@ public class Technician {
             return 0.0;
         }
 
-        double baseLaborTime = currentTicket.getStatus() == TicketStatus.COMPLETE
-                ? currentTicket.getActualLaborTime()
-                : currentTicket.getEstimatedLaborTime();
+        double baseLaborTime =
+                currentTicket.getStatus() == TicketStatus.COMPLETE
+                        ? currentTicket.getActualLaborTime()
+                        : currentTicket.getEstimatedLaborTime();
 
         if (serviceTimeModel == ServiceTimeModel.PDF) {
-            double normalizedExperience = ServiceTimeEquations.normalizeExperienceLevel(
-                    experienceLevel,
-                    maxExperienceLevel);
+            double normalizedExperience =
+                    ServiceTimeEquations.normalizeExperienceLevel(
+                            experienceLevel, maxExperienceLevel);
             return ServiceTimeEquations.effectiveMeanServiceTime(
-                    baseLaborTime,
-                    normalizedExperience,
-                    experienceAlpha);
+                    baseLaborTime, normalizedExperience, experienceAlpha);
         }
 
         double experienceFactor = 1.0 - (experienceLevel * 0.05);
@@ -63,9 +63,13 @@ public class Technician {
 
     public void printAssignment(ServiceTicket ticket) {
         // Log the assignment of a ticket to this technician
-        LOGGER.info(String.format(
-                "[Technician %d] start ticket #%d exp=%d serviceTime=%.2fh",
-                technicianId, ticket.getTicketId(), experienceLevel, ticket.getActualLaborTime()));
+        LOGGER.info(
+                String.format(
+                        "[Technician %d] start ticket #%d exp=%d serviceTime=%.2fh",
+                        technicianId,
+                        ticket.getTicketId(),
+                        experienceLevel,
+                        ticket.getActualLaborTime()));
     }
 
     public int getTechnicianId() {

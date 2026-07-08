@@ -1,11 +1,11 @@
 package simulator.inventory;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 class PartsInventoryEquationsTest {
     @Test
@@ -36,7 +36,10 @@ class PartsInventoryEquationsTest {
 
     @Test
     void averageLeadTimeUsesObservedSamples() {
-        assertEquals(7.0 / 3.0, PartsInventoryEquations.averageLeadTimeHours(new double[] {1.0, 2.0, 4.0}), 1e-9);
+        assertEquals(
+                7.0 / 3.0,
+                PartsInventoryEquations.averageLeadTimeHours(new double[] {1.0, 2.0, 4.0}),
+                1e-9);
     }
 
     @Test

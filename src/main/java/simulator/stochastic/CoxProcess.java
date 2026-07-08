@@ -1,11 +1,12 @@
 package simulator.stochastic;
 
+import simulator.model.Customer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import simulator.model.Customer;
 
 public class CoxProcess {
     private static final Logger LOGGER = Logger.getLogger(CoxProcess.class.getName());
@@ -18,7 +19,8 @@ public class CoxProcess {
         this(rateFunction, new Random(), 1.0);
     }
 
-    public CoxProcess(ArrivalRateFunction rateFunction, Random random, double stochasticIntensityMultiplier) {
+    public CoxProcess(
+            ArrivalRateFunction rateFunction, Random random, double stochasticIntensityMultiplier) {
         this.rateFunction = rateFunction;
         this.random = random;
         this.stochasticIntensityMultiplier = stochasticIntensityMultiplier;
@@ -29,8 +31,10 @@ public class CoxProcess {
     }
 
     public void printRate(double timeHours) {
-        LOGGER.info(String.format(
-                "[CoxProcess] lambda(t=%.2fh)=%.2f vehicles/h", timeHours, arrivalRateAt(timeHours)));
+        LOGGER.info(
+                String.format(
+                        "[CoxProcess] lambda(t=%.2fh)=%.2f vehicles/h",
+                        timeHours, arrivalRateAt(timeHours)));
     }
 
     public double arrivalRateAt(double timeHours) {
@@ -38,7 +42,8 @@ public class CoxProcess {
     }
 
     public double integratedIntensity(double startTimeHours, double endTimeHours) {
-        return rateFunction.integratedRate(startTimeHours, endTimeHours) * stochasticIntensityMultiplier;
+        return rateFunction.integratedRate(startTimeHours, endTimeHours)
+                * stochasticIntensityMultiplier;
     }
 
     public double probabilityExactlyNArrivals(int n, double startTimeHours, double endTimeHours) {
@@ -52,14 +57,16 @@ public class CoxProcess {
 
     public double sampleNextArrivalTime(double afterTimeHours, double horizonEndHours) {
         /*
-            Use thinning method to sample the next arrival time
-            from a non-homogeneous Poisson process.
-         */
+           Use thinning method to sample the next arrival time
+           from a non-homogeneous Poisson process.
+        */
         if (afterTimeHours >= horizonEndHours) {
             return -1.0;
         }
 
-        double lambdaMax = rateFunction.maxRate(afterTimeHours, horizonEndHours) * stochasticIntensityMultiplier;
+        double lambdaMax =
+                rateFunction.maxRate(afterTimeHours, horizonEndHours)
+                        * stochasticIntensityMultiplier;
         if (lambdaMax <= 0.0) {
             return -1.0;
         }
@@ -78,11 +85,12 @@ public class CoxProcess {
         }
     }
 
-    public List<Customer> generateArrivals(double startTimeHours, double endTimeHours, int maxArrivals) {
+    public List<Customer> generateArrivals(
+            double startTimeHours, double endTimeHours, int maxArrivals) {
         /*
-            Generate a list of customer arrivals using the thinning method
-            for a non-homogeneous Poisson process.
-         */
+           Generate a list of customer arrivals using the thinning method
+           for a non-homogeneous Poisson process.
+        */
         List<Customer> arrivals = new ArrayList<>();
         double nextTime = startTimeHours;
 
@@ -95,10 +103,10 @@ public class CoxProcess {
             Customer customer = new Customer(nextTime);
             arrivals.add(customer);
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine(String.format(
-                        "Cox arrival at t=%.3f h (lambda=%.3f vehicles/h)",
-                        nextTime,
-                        arrivalRateAt(nextTime)));
+                LOGGER.fine(
+                        String.format(
+                                "Cox arrival at t=%.3f h (lambda=%.3f vehicles/h)",
+                                nextTime, arrivalRateAt(nextTime)));
             }
         }
 
@@ -106,6 +114,7 @@ public class CoxProcess {
     }
 
     public int sampleArrivalCount(double startTimeHours, double endTimeHours) {
-        return PoissonDistribution.samplePoisson(random, integratedIntensity(startTimeHours, endTimeHours));
+        return PoissonDistribution.samplePoisson(
+                random, integratedIntensity(startTimeHours, endTimeHours));
     }
 }

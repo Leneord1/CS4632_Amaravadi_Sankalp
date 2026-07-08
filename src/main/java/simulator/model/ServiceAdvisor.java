@@ -14,20 +14,28 @@ public class ServiceAdvisor {
         this.isAvailable = true;
     }
 
-    public ServiceTicket intakeCustomer(Customer customer, int ticketId, String jobType, double estimatedLaborTime, double actualLaborTime) {
+    public ServiceTicket intakeCustomer(
+            Customer customer,
+            int ticketId,
+            String jobType,
+            double estimatedLaborTime,
+            double actualLaborTime) {
         //  Intake a new customer and assign them to this advisor
         currentCustomer = customer;
         isAvailable = false;
         customer.setAssignedAdvisor(this);
 
-        ServiceTicket ticket = new ServiceTicket(ticketId, jobType, estimatedLaborTime, actualLaborTime);
+        ServiceTicket ticket =
+                new ServiceTicket(ticketId, jobType, estimatedLaborTime, actualLaborTime);
         customer.setTicket(ticket);
         return ticket;
     }
 
     public void printIntake(ServiceTicket ticket) {
-        LOGGER.info(String.format(
-                "[Advisor %d] intake ticket #%d (%s)", advisorId, ticket.getTicketId(), ticket.getJobType()));
+        LOGGER.info(
+                String.format(
+                        "[Advisor %d] intake ticket #%d (%s)",
+                        advisorId, ticket.getTicketId(), ticket.getJobType()));
     }
 
     public int getAdvisorId() {

@@ -6,10 +6,10 @@ public interface ArrivalRateFunction {
 
     default double integratedRate(double startTimeHours, double endTimeHours) {
         /*
-            Use the trapezoidal rule to integrate
-            the arrival rate function over the given
-            time interval.
-         */
+           Use the trapezoidal rule to integrate
+           the arrival rate function over the given
+           time interval.
+        */
         if (endTimeHours <= startTimeHours) {
             return 0.0;
         }

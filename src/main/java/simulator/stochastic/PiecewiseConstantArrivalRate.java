@@ -9,7 +9,8 @@ public class PiecewiseConstantArrivalRate implements ArrivalRateFunction {
     public PiecewiseConstantArrivalRate(double[] segmentStartsHours, double[] segmentRates) {
         //  Validate input arrays
         if (segmentStartsHours.length == 0 || segmentStartsHours.length != segmentRates.length) {
-            throw new IllegalArgumentException("Segment starts and rates must be non-empty and equal length");
+            throw new IllegalArgumentException(
+                    "Segment starts and rates must be non-empty and equal length");
         }
 
         this.segmentStartsHours = Arrays.copyOf(segmentStartsHours, segmentStartsHours.length);
@@ -22,7 +23,8 @@ public class PiecewiseConstantArrivalRate implements ArrivalRateFunction {
                 new double[] {8.0, 6.0, 4.0, 2.0, 3.0, 5.0, 3.0});
     }
 
-    public PiecewiseConstantArrivalRate scaledToMeanRate(double targetMeanRate, double horizonHours) {
+    public PiecewiseConstantArrivalRate scaledToMeanRate(
+            double targetMeanRate, double horizonHours) {
         // Validate inputs
         if (targetMeanRate < 0.0) {
             throw new IllegalArgumentException("targetMeanRate must be non-negative");
@@ -61,7 +63,8 @@ public class PiecewiseConstantArrivalRate implements ArrivalRateFunction {
     public double integratedRate(double startTimeHours, double endTimeHours) {
         //  Validate inputs
         if (startTimeHours < 0.0 || endTimeHours < 0.0) {
-            throw new IllegalArgumentException("startTimeHours and endTimeHours must be non-negative");
+            throw new IllegalArgumentException(
+                    "startTimeHours and endTimeHours must be non-negative");
         }
         if (endTimeHours <= startTimeHours) {
             return 0.0;
@@ -71,9 +74,10 @@ public class PiecewiseConstantArrivalRate implements ArrivalRateFunction {
         for (int i = 0; i < segmentStartsHours.length; i++) {
             //  Calculate the overlap between the current segment and the integration interval
             double segmentStart = segmentStartsHours[i];
-            double segmentEnd = i + 1 < segmentStartsHours.length
-                    ? segmentStartsHours[i + 1]
-                    : Double.POSITIVE_INFINITY;
+            double segmentEnd =
+                    i + 1 < segmentStartsHours.length
+                            ? segmentStartsHours[i + 1]
+                            : Double.POSITIVE_INFINITY;
 
             double overlapStart = Math.max(startTimeHours, segmentStart);
             double overlapEnd = Math.min(endTimeHours, segmentEnd);

@@ -1,9 +1,10 @@
 package simulator.metrics;
 
-import org.junit.jupiter.api.Test;
-import simulator.model.RepairBay;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
+import simulator.model.RepairBay;
 
 class BayUtilizationMetricsTest {
     @Test

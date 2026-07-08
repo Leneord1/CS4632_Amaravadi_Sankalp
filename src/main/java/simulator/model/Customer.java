@@ -15,10 +15,11 @@ public class Customer {
         this.totalWaitTime = 0.0;
     }
 
-
     public void printArrival(double currentTimeHours) {
-        LOGGER.info(String.format(
-                "[Customer] arrived t=%.2fh (recorded arrival=%.2fh)", currentTimeHours, arrivalTime));
+        LOGGER.info(
+                String.format(
+                        "[Customer] arrived t=%.2fh (recorded arrival=%.2fh)",
+                        currentTimeHours, arrivalTime));
     }
 
     public double getArrivalTime() {

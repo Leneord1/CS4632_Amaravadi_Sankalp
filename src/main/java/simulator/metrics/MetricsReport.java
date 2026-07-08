@@ -1,9 +1,10 @@
 package simulator.metrics;
 
-import java.util.Collections;
-import java.util.Map;
 import simulator.model.RepairBay;
 import simulator.model.Technician;
+
+import java.util.Collections;
+import java.util.Map;
 
 public class MetricsReport {
     private double averageCustomerWaitTime;
@@ -131,7 +132,9 @@ public class MetricsReport {
     }
 
     public Map<RepairBay, Double> getBayUtilization() {
-        return bayUtilization == null ? Collections.emptyMap() : Collections.unmodifiableMap(bayUtilization);
+        return bayUtilization == null
+                ? Collections.emptyMap()
+                : Collections.unmodifiableMap(bayUtilization);
     }
 
     public void setBayUtilization(Map<RepairBay, Double> bayUtilization) {

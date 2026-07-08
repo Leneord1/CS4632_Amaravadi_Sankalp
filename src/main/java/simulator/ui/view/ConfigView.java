@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
 import simulator.SimulationEngine;
 import simulator.config.SimulationConfig;
 import simulator.data.DataRecorder;
@@ -106,24 +107,29 @@ public class ConfigView implements View {
     }
 
     private Task<RunResult> getRunResultTask(SimulationConfig config) {
-        Task<RunResult> task = new Task<>() {
+        Task<RunResult> task =
+                new Task<>() {
 
-            @Override
-            protected RunResult call() {
-                DataRecorder recorder = new DataRecorder();
-                long start = System.nanoTime();
-                SimulationEngine engine = new SimulationEngine(config, recorder);
-                engine.run();
-                long millis = (System.nanoTime() - start) / 1_000_000L;
-                return new RunResult(config, engine.getMetrics().buildReport(), recorder, millis);
-            }
-        };
+                    @Override
+                    protected RunResult call() {
+                        DataRecorder recorder = new DataRecorder();
+                        long start = System.nanoTime();
+                        SimulationEngine engine = new SimulationEngine(config, recorder);
+                        engine.run();
+                        long millis = (System.nanoTime() - start) / 1_000_000L;
+                        return new RunResult(
+                                config, engine.getMetrics().buildReport(), recorder, millis);
+                    }
+                };
         task.setOnSucceeded(e -> navigator.navigateTo(new ResultsView(navigator, task.getValue())));
-        task.setOnFailed(e -> {
-            runButton.setDisable(false);
-            Throwable error = task.getException();
-            statusLabel.setText("Run failed: " + (error == null ? "unknown error" : error.getMessage()));
-        });
+        task.setOnFailed(
+                e -> {
+                    runButton.setDisable(false);
+                    Throwable error = task.getException();
+                    statusLabel.setText(
+                            "Run failed: "
+                                    + (error == null ? "unknown error" : error.getMessage()));
+                });
         return task;
     }
 

@@ -1,7 +1,11 @@
 package simulator.data;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
 import simulator.SimulationEngine;
 import simulator.config.SimulationConfig;
 import simulator.metrics.MetricsReport;
@@ -10,9 +14,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Coverage for CSV/JSON serialization and run-result persistence.
 class DataWritersTest {
@@ -63,7 +64,8 @@ class DataWritersTest {
     @Test
     void jsonQuoteEscapesControlCharactersAndNull() {
         assertEquals("null", JsonWriter.quote(null));
-        assertEquals("\"tab\\tnewline\\nquote\\\"slash\\\\\"",
+        assertEquals(
+                "\"tab\\tnewline\\nquote\\\"slash\\\\\"",
                 JsonWriter.quote("tab\tnewline\nquote\"slash\\"));
         assertTrue(JsonWriter.quote("carriage\r").contains("\\r"));
     }
@@ -71,12 +73,13 @@ class DataWritersTest {
     @Test
     void jsonObjectSerializesAllValueTypesAndNesting(@TempDir Path dir) throws IOException {
         JsonWriter.JsonObject nested = JsonWriter.object().put("flag", true);
-        JsonWriter.JsonObject root = JsonWriter.object()
-                .put("name", "engine")
-                .put("ratio", 0.5)
-                .put("count", 3)
-                .put("id", 42L)
-                .put("child", nested);
+        JsonWriter.JsonObject root =
+                JsonWriter.object()
+                        .put("name", "engine")
+                        .put("ratio", 0.5)
+                        .put("count", 3)
+                        .put("id", 42L)
+                        .put("child", nested);
 
         String json = root.toString();
         assertTrue(json.contains("\"name\": \"engine\""));
@@ -104,11 +107,12 @@ class DataWritersTest {
 
     @Test
     void createSessionAndWriteRunPersistAllArtifacts(@TempDir Path root) throws IOException {
-        SimulationConfig config = SimulationConfig.builder()
-                .simulationHorizonHours(3.0)
-                .customerCount(10)
-                .randomSeed(11L)
-                .build();
+        SimulationConfig config =
+                SimulationConfig.builder()
+                        .simulationHorizonHours(3.0)
+                        .customerCount(10)
+                        .randomSeed(11L)
+                        .build();
         DataRecorder recorder = new DataRecorder();
         SimulationEngine engine = new SimulationEngine(config, recorder);
         engine.run();

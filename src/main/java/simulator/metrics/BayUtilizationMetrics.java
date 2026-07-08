@@ -1,9 +1,10 @@
 package simulator.metrics;
 
+import simulator.model.RepairBay;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import simulator.model.RepairBay;
 
 public class BayUtilizationMetrics {
     private final Map<RepairBay, Double> busyHoursByBay = new HashMap<>();
@@ -21,7 +22,9 @@ public class BayUtilizationMetrics {
 
         double updatedBusyHours = busyHoursByBay.getOrDefault(bay, 0.0) + occupiedHours;
         busyHoursByBay.put(bay, updatedBusyHours);
-        bayUtilization.put(bay, MetricsEquations.resourceUtilization(updatedBusyHours, simulationHorizonHours));
+        bayUtilization.put(
+                bay,
+                MetricsEquations.resourceUtilization(updatedBusyHours, simulationHorizonHours));
     }
 
     public double getBayUtilization(RepairBay bay) {
@@ -33,10 +36,9 @@ public class BayUtilizationMetrics {
     }
 
     public double getShopBayUtilization() {
-        double totalBusyHours = busyHoursByBay.values().stream().mapToDouble(Double::doubleValue).sum();
+        double totalBusyHours =
+                busyHoursByBay.values().stream().mapToDouble(Double::doubleValue).sum();
         return MetricsEquations.shopResourceUtilization(
-                totalBusyHours,
-                busyHoursByBay.size(),
-                simulationHorizonHours);
+                totalBusyHours, busyHoursByBay.size(), simulationHorizonHours);
     }
 }

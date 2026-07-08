@@ -3,8 +3,7 @@ package simulator.stochastic;
 import java.util.Random;
 
 public final class PoissonDistribution {
-    private PoissonDistribution() {
-    }
+    private PoissonDistribution() {}
 
     public static double probabilityExactlyNArrivals(int n, double lambda, double timeHours) {
         //  Validate inputs
@@ -23,9 +22,7 @@ public final class PoissonDistribution {
             throw new IllegalArgumentException("n and integrated intensity must be non-negative");
         }
 
-        return Math.pow(integratedIntensity, n)
-                * Math.exp(-integratedIntensity)
-                / factorial(n);
+        return Math.pow(integratedIntensity, n) * Math.exp(-integratedIntensity) / factorial(n);
     }
 
     public static double sampleExponentialInterArrival(Random random, double lambda) {

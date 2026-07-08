@@ -1,11 +1,11 @@
 package simulator.inventory;
 
-import java.util.Random;
 import simulator.stochastic.PoissonDistribution;
 
+import java.util.Random;
+
 public final class PartsInventoryEquations {
-    private PartsInventoryEquations() {
-    }
+    private PartsInventoryEquations() {}
 
     public static boolean shouldReorder(int quantityOnHand, int reorderPoint) {
         return quantityOnHand < reorderPoint;

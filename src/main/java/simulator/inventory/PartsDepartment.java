@@ -1,5 +1,12 @@
 package simulator.inventory;
 
+import simulator.config.SimulationConfig;
+import simulator.model.Part;
+import simulator.model.PartRequirement;
+import simulator.model.PartsInventory;
+import simulator.model.ServiceTicket;
+import simulator.model.TicketStatus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,12 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
-import simulator.config.SimulationConfig;
-import simulator.model.Part;
-import simulator.model.PartRequirement;
-import simulator.model.PartsInventory;
-import simulator.model.ServiceTicket;
-import simulator.model.TicketStatus;
 
 public class PartsDepartment {
     private static final Logger LOGGER = Logger.getLogger(PartsDepartment.class.getName());
@@ -33,33 +34,41 @@ public class PartsDepartment {
 
     public static PartsDepartment fromConfig(SimulationConfig config) {
         PartsInventory partsInventory = new PartsInventory();
-        Part defaultPart = new Part(
-                1,
-                "General Repair Part",
-                config.getInitialPartsQuantityOnHand(),
-                config.getPartsReorderPoint(),
-                config.getPartsReorderQuantity(),
-                config.getPartsLeadTimeHours());
+        Part defaultPart =
+                new Part(
+                        1,
+                        "General Repair Part",
+                        config.getInitialPartsQuantityOnHand(),
+                        config.getPartsReorderPoint(),
+                        config.getPartsReorderQuantity(),
+                        config.getPartsLeadTimeHours());
         partsInventory.addPart(defaultPart);
         return new PartsDepartment(partsInventory, new Random(config.getRandomSeed()));
     }
 
     public void printStatus(double currentTimeHours) {
-        LOGGER.info(String.format(
-                "[PartsDept] t=%.2fh pendingOrders=%d blocked=%d avgFulfill=%.2fh",
-                currentTimeHours, pendingOrders.size(), blockedTickets.size(), getAverageFulfillmentTimeHours()));
+        LOGGER.info(
+                String.format(
+                        "[PartsDept] t=%.2fh pendingOrders=%d blocked=%d avgFulfill=%.2fh",
+                        currentTimeHours,
+                        pendingOrders.size(),
+                        blockedTickets.size(),
+                        getAverageFulfillmentTimeHours()));
     }
 
-    public PartsFulfillmentResult requestPartsForTicket(ServiceTicket ticket, double currentTimeHours) {
+    public PartsFulfillmentResult requestPartsForTicket(
+            ServiceTicket ticket, double currentTimeHours) {
         if (ticket.getRequiredParts().isEmpty()) {
             ticket.setStatus(TicketStatus.IN_PROGRESS);
-            return new PartsFulfillmentResult(PartsFulfillmentStatus.FULFILLED, ticket.getPartsDelay());
+            return new PartsFulfillmentResult(
+                    PartsFulfillmentStatus.FULFILLED, ticket.getPartsDelay());
         }
 
         if (inventory.fulfillRequirements(ticket.getRequiredParts())) {
             ticket.setStatus(TicketStatus.IN_PROGRESS);
             triggerReordersForRequirements(ticket.getRequiredParts(), currentTimeHours);
-            return new PartsFulfillmentResult(PartsFulfillmentStatus.FULFILLED, ticket.getPartsDelay());
+            return new PartsFulfillmentResult(
+                    PartsFulfillmentStatus.FULFILLED, ticket.getPartsDelay());
         }
 
         ticket.setStatus(TicketStatus.BLOCKED);
@@ -131,7 +140,8 @@ public class PartsDepartment {
         return releasedTickets;
     }
 
-    private void triggerReordersForRequirements(Iterable<PartRequirement> requirements, double currentTimeHours) {
+    private void triggerReordersForRequirements(
+            Iterable<PartRequirement> requirements, double currentTimeHours) {
         for (PartRequirement requirement : requirements) {
             Part part = inventory.getPart(requirement.partId());
             if (part != null && inventory.shouldReorder(part)) {
@@ -140,7 +150,8 @@ public class PartsDepartment {
         }
     }
 
-    private void placeOrdersForShortages(Iterable<PartRequirement> requirements, double currentTimeHours) {
+    private void placeOrdersForShortages(
+            Iterable<PartRequirement> requirements, double currentTimeHours) {
         for (PartRequirement requirement : requirements) {
             if (inventory.isPartAvailable(requirement.partId(), requirement.quantity())) {
                 continue;
@@ -163,13 +174,15 @@ public class PartsDepartment {
     }
 
     private void placeOrder(Part part, double currentTimeHours) {
-        double leadTimeHours = PartsInventoryEquations.sampleLeadTimeHours(random, part.getMeanLeadTimeHours());
-        pendingOrders.add(new PendingPartOrder(
-                nextOrderId++,
-                part.getPartId(),
-                part.getReorderQuantity(),
-                currentTimeHours,
-                currentTimeHours + leadTimeHours));
+        double leadTimeHours =
+                PartsInventoryEquations.sampleLeadTimeHours(random, part.getMeanLeadTimeHours());
+        pendingOrders.add(
+                new PendingPartOrder(
+                        nextOrderId++,
+                        part.getPartId(),
+                        part.getReorderQuantity(),
+                        currentTimeHours,
+                        currentTimeHours + leadTimeHours));
     }
 
     private void recordFulfillment(double fulfillmentTimeHours) {

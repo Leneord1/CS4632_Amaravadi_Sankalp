@@ -1,15 +1,16 @@
 package simulator.metrics;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import simulator.config.SimulationConfig;
 import simulator.model.Customer;
 import simulator.model.RepairBay;
 import simulator.model.ServiceTicket;
 import simulator.model.Technician;
 import simulator.model.TicketStatus;
-import simulator.config.SimulationConfig;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MetricsCollector {
     private static final Logger LOGGER = Logger.getLogger(MetricsCollector.class.getName());
@@ -24,12 +25,14 @@ public class MetricsCollector {
     private double validationRelativeTolerance;
 
     private final CustomerWaitMetrics customerWaitMetrics = new CustomerWaitMetrics();
-    private final TechnicianUtilizationMetrics technicianUtilizationMetrics = new TechnicianUtilizationMetrics();
+    private final TechnicianUtilizationMetrics technicianUtilizationMetrics =
+            new TechnicianUtilizationMetrics();
     private final BayUtilizationMetrics bayUtilizationMetrics = new BayUtilizationMetrics();
     private final PartsDelayMetrics partsDelayMetrics = new PartsDelayMetrics();
     private final ThroughputMetrics throughputMetrics = new ThroughputMetrics();
     private final QueueBenchmarkMetrics queueBenchmarkMetrics = new QueueBenchmarkMetrics();
-    private final SimulationValidationMetrics simulationValidationMetrics = new SimulationValidationMetrics();
+    private final SimulationValidationMetrics simulationValidationMetrics =
+            new SimulationValidationMetrics();
 
     public void configureSimulation(SimulationConfig config) {
         this.simulationHorizonHours = config.getSimulationHorizonHours();
@@ -75,9 +78,7 @@ public class MetricsCollector {
     }
 
     public void recordCustomerCompletion(
-            Customer customer,
-            double advisorWaitTime,
-            double serviceTime) {
+            Customer customer, double advisorWaitTime, double serviceTime) {
         customerWaitMetrics.recordCompletedCustomer(customer, advisorWaitTime, serviceTime);
         avgWaitTime = customerWaitMetrics.getAverageWaitTime();
     }
@@ -94,9 +95,12 @@ public class MetricsCollector {
         if (!LOGGER.isLoggable(Level.INFO)) {
             return;
         }
-        LOGGER.info(String.format(
-                "[Metrics] %s jobsCompleted=%d avgCustomerWait=%.3fh",
-                label, throughputMetrics.getRecordedJobs(), customerWaitMetrics.getAverageWaitTime()));
+        LOGGER.info(
+                String.format(
+                        "[Metrics] %s jobsCompleted=%d avgCustomerWait=%.3fh",
+                        label,
+                        throughputMetrics.getRecordedJobs(),
+                        customerWaitMetrics.getAverageWaitTime()));
     }
 
     public MetricsReport buildReport() {
@@ -109,20 +113,18 @@ public class MetricsCollector {
         report.setAverageTotalJobDelay(customerWaitMetrics.getAverageTotalJobDelay());
         report.setJobsCompletedPerDay(throughputMetrics.getJobsCompletedPerDay());
         report.setTechnicianUtilization(technicianUtilizationMetrics.getTechnicianUtilization());
-        report.setJobsCompletedByTechnician(technicianUtilizationMetrics.getJobsCompletedByTechnician());
+        report.setJobsCompletedByTechnician(
+                technicianUtilizationMetrics.getJobsCompletedByTechnician());
         report.setBayUtilization(bayUtilizationMetrics.getBayUtilizationByBay());
-        report.setSimulatedShopTechnicianUtilization(technicianUtilizationMetrics.getShopTechnicianUtilization());
+        report.setSimulatedShopTechnicianUtilization(
+                technicianUtilizationMetrics.getShopTechnicianUtilization());
         report.setSimulatedShopBayUtilization(bayUtilizationMetrics.getShopBayUtilization());
         report.setAnalyticalSystemUtilization(
                 queueBenchmarkMetrics.calculateSystemUtilization(
-                        arrivalRate,
-                        technicianCount,
-                        serviceRatePerTechnician));
+                        arrivalRate, technicianCount, serviceRatePerTechnician));
         report.setAnalyticalQueueWait(
                 queueBenchmarkMetrics.calculateExpectedQueueWait(
-                        arrivalRate,
-                        technicianCount,
-                        serviceRatePerTechnician));
+                        arrivalRate, technicianCount, serviceRatePerTechnician));
         report.setValidationReport(
                 simulationValidationMetrics.validateAgainstQueueBenchmark(
                         report,
@@ -141,26 +143,34 @@ public class MetricsCollector {
             return;
         }
 
-        LOGGER.info(String.format("Average customer wait (W_total): %.3f h", metricsReport.getAverageCustomerWaitTime()));
-        LOGGER.info(String.format(
-                "Wait components W_advisor=%.3f D_queue=%.3f D_parts=%.3f T_service=%.3f",
-                metricsReport.getAverageAdvisorWaitTime(),
-                metricsReport.getAverageQueueDelay(),
-                metricsReport.getAveragePartsDelay(),
-                metricsReport.getAverageServiceTime()));
-        LOGGER.info(String.format(
-                "Shop utilization simulated tech=%.3f bay=%.3f analytical rho=%.3f",
-                metricsReport.getSimulatedShopTechnicianUtilization(),
-                metricsReport.getSimulatedShopBayUtilization(),
-                metricsReport.getAnalyticalSystemUtilization()));
-        LOGGER.info(String.format("Analytical queue wait Wq=%.3f h", metricsReport.getAnalyticalQueueWait()));
+        LOGGER.info(
+                String.format(
+                        "Average customer wait (W_total): %.3f h",
+                        metricsReport.getAverageCustomerWaitTime()));
+        LOGGER.info(
+                String.format(
+                        "Wait components W_advisor=%.3f D_queue=%.3f D_parts=%.3f T_service=%.3f",
+                        metricsReport.getAverageAdvisorWaitTime(),
+                        metricsReport.getAverageQueueDelay(),
+                        metricsReport.getAveragePartsDelay(),
+                        metricsReport.getAverageServiceTime()));
+        LOGGER.info(
+                String.format(
+                        "Shop utilization simulated tech=%.3f bay=%.3f analytical rho=%.3f",
+                        metricsReport.getSimulatedShopTechnicianUtilization(),
+                        metricsReport.getSimulatedShopBayUtilization(),
+                        metricsReport.getAnalyticalSystemUtilization()));
+        LOGGER.info(
+                String.format(
+                        "Analytical queue wait Wq=%.3f h", metricsReport.getAnalyticalQueueWait()));
         ValidationReport validationReport = metricsReport.getValidationReport();
         if (validationReport != null) {
-            LOGGER.info(String.format(
-                    "Validation rho error=%.3f Wq error=%.3f overall=%s",
-                    validationReport.getUtilizationRelativeError(),
-                    validationReport.getQueueWaitRelativeError(),
-                    validationReport.isOverallValid() ? "PASS" : "PENDING"));
+            LOGGER.info(
+                    String.format(
+                            "Validation rho error=%.3f Wq error=%.3f overall=%s",
+                            validationReport.getUtilizationRelativeError(),
+                            validationReport.getQueueWaitRelativeError(),
+                            validationReport.isOverallValid() ? "PASS" : "PENDING"));
         }
     }
 

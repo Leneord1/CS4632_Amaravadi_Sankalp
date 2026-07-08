@@ -3,6 +3,7 @@ package simulator.ui;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 import simulator.ui.view.LandingView;
 import simulator.ui.view.View;
 
@@ -31,7 +32,10 @@ public class SimulatorApp extends Application implements Navigator {
         Scene scene = stage.getScene();
         if (scene == null) {
             scene = new Scene(view.getRoot(), WINDOW_WIDTH, WINDOW_HEIGHT);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(STYLESHEET)).toExternalForm());
+            scene.getStylesheets()
+                    .add(
+                            Objects.requireNonNull(getClass().getResource(STYLESHEET))
+                                    .toExternalForm());
             stage.setScene(scene);
         } else {
             scene.setRoot(view.getRoot());

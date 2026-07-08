@@ -16,13 +16,20 @@ public record TimeSeriesSample(
     }
 
     public String toCsvRow() {
-        return realEpochMillis + ","
-                + simTimeHours + ","
-                + intakeQueue + ","
-                + jobQueueDepth + ","
-                + busyTechnicians + ","
-                + busyBays + ","
-                + partsOnHand + ","
+        return realEpochMillis
+                + ","
+                + simTimeHours
+                + ","
+                + intakeQueue
+                + ","
+                + jobQueueDepth
+                + ","
+                + busyTechnicians
+                + ","
+                + busyBays
+                + ","
+                + partsOnHand
+                + ","
                 + jobsCompleted;
     }
 }

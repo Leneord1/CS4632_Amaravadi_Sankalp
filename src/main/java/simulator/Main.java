@@ -1,10 +1,11 @@
 package simulator;
 
+import simulator.config.SimulationConfig;
+import simulator.config.SimulationConfigLoader;
+
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import simulator.config.SimulationConfig;
-import simulator.config.SimulationConfigLoader;
 
 public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
@@ -74,8 +75,8 @@ public class Main {
     private static String formatConfig(SimulationConfig config) {
         //  Format the simulation configuration as a string for logging
         return String.format(
-                "Config horizon=%.1fh lambda=%.2f c=%d mu=%.2f advisors=%d alpha=%.2f k=%.1f "
-                        + "reorder(r=%d,Q=%d,L=%.1fh) tolerance=%.2f replications=%d seed=%d model=%s",
+                "Config horizon=%.1fh lambda=%.2f c=%d mu=%.2f advisors=%d alpha=%.2f k=%.1f"
+                        + " reorder(r=%d,Q=%d,L=%.1fh) tolerance=%.2f replications=%d seed=%d model=%s",
                 config.getSimulationHorizonHours(),
                 config.getArrivalRate(),
                 config.getTechnicianCount(),

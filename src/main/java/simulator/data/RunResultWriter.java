@@ -1,5 +1,12 @@
 package simulator.data;
 
+import simulator.config.SimulationConfig;
+import simulator.data.JsonWriter.JsonObject;
+import simulator.metrics.MetricsReport;
+import simulator.metrics.ValidationReport;
+import simulator.model.RepairBay;
+import simulator.model.Technician;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,15 +17,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import simulator.config.SimulationConfig;
-import simulator.data.JsonWriter.JsonObject;
-import simulator.metrics.MetricsReport;
-import simulator.metrics.ValidationReport;
-import simulator.model.RepairBay;
-import simulator.model.Technician;
 
 public final class RunResultWriter {
-    private static final DateTimeFormatter DIR_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+    private static final DateTimeFormatter DIR_FORMAT =
+            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
     private static final String MASTER_INDEX = "master_index.csv";
     private static final String MASTER_HEADER =
             "run_id,purpose,params_changed,duration_seconds,status,"
@@ -37,7 +39,8 @@ public final class RunResultWriter {
         Path sessionDir = resultsRoot.resolve("run_" + timestamp);
         Files.createDirectories(sessionDir);
         RunResultWriter writer = new RunResultWriter(sessionDir);
-        Files.writeString(writer.masterIndex, MASTER_HEADER + System.lineSeparator(), StandardCharsets.UTF_8);
+        Files.writeString(
+                writer.masterIndex, MASTER_HEADER + System.lineSeparator(), StandardCharsets.UTF_8);
         return writer;
     }
 
@@ -52,16 +55,17 @@ public final class RunResultWriter {
             long wallClockMillis,
             SimulationConfig config,
             MetricsReport report,
-            DataRecorder recorder) throws IOException {
+            DataRecorder recorder)
+            throws IOException {
         String base = String.format("run_%03d", runId);
-        CsvWriter.writeTimeSeries(sessionDir.resolve(base + "_timeseries.csv"), recorder.getSamples());
+        CsvWriter.writeTimeSeries(
+                sessionDir.resolve(base + "_timeseries.csv"), recorder.getSamples());
         CsvWriter.writeEvents(sessionDir.resolve(base + "_events.csv"), recorder.getEvents());
         JsonWriter.write(
                 sessionDir.resolve(base + "_summary.json"),
                 buildSummaryJson(runId, purpose, wallClockMillis, report).toString());
         JsonWriter.write(
-                sessionDir.resolve(base + "_config.json"),
-                buildConfigJson(config).toString());
+                sessionDir.resolve(base + "_config.json"), buildConfigJson(config).toString());
         appendMasterIndex(runId, purpose, paramsChanged, wallClockMillis, base);
     }
 
@@ -76,30 +80,37 @@ public final class RunResultWriter {
             bayUtil.put(Integer.toString(entry.getKey().getBayId()), entry.getValue());
         }
 
-        JsonObject summary = JsonWriter.object()
-                .put("runId", runId)
-                .put("purpose", purpose)
-                .put("wallClockMillis", wallClockMillis)
-                .put("jobsCompletedPerDay", report.getJobsCompletedPerDay())
-                .put("averageCustomerWaitHours", report.getAverageCustomerWaitTime())
-                .put("averageAdvisorWaitHours", report.getAverageAdvisorWaitTime())
-                .put("averageQueueDelayHours", report.getAverageQueueDelay())
-                .put("averagePartsDelayHours", report.getAveragePartsDelay())
-                .put("averageServiceTimeHours", report.getAverageServiceTime())
-                .put("averageTotalJobDelayHours", report.getAverageTotalJobDelay())
-                .put("shopTechnicianUtilization", report.getSimulatedShopTechnicianUtilization())
-                .put("shopBayUtilization", report.getSimulatedShopBayUtilization())
-                .put("analyticalSystemUtilization", report.getAnalyticalSystemUtilization())
-                .put("analyticalQueueWaitHours", report.getAnalyticalQueueWait())
-                .put("technicianUtilization", techUtil)
-                .put("bayUtilization", bayUtil);
+        JsonObject summary =
+                JsonWriter.object()
+                        .put("runId", runId)
+                        .put("purpose", purpose)
+                        .put("wallClockMillis", wallClockMillis)
+                        .put("jobsCompletedPerDay", report.getJobsCompletedPerDay())
+                        .put("averageCustomerWaitHours", report.getAverageCustomerWaitTime())
+                        .put("averageAdvisorWaitHours", report.getAverageAdvisorWaitTime())
+                        .put("averageQueueDelayHours", report.getAverageQueueDelay())
+                        .put("averagePartsDelayHours", report.getAveragePartsDelay())
+                        .put("averageServiceTimeHours", report.getAverageServiceTime())
+                        .put("averageTotalJobDelayHours", report.getAverageTotalJobDelay())
+                        .put(
+                                "shopTechnicianUtilization",
+                                report.getSimulatedShopTechnicianUtilization())
+                        .put("shopBayUtilization", report.getSimulatedShopBayUtilization())
+                        .put("analyticalSystemUtilization", report.getAnalyticalSystemUtilization())
+                        .put("analyticalQueueWaitHours", report.getAnalyticalQueueWait())
+                        .put("technicianUtilization", techUtil)
+                        .put("bayUtilization", bayUtil);
 
         ValidationReport validation = report.getValidationReport();
         if (validation != null) {
-            summary.put("validation", JsonWriter.object()
-                    .put("utilizationRelativeError", validation.getUtilizationRelativeError())
-                    .put("queueWaitRelativeError", validation.getQueueWaitRelativeError())
-                    .put("overallValid", validation.isOverallValid()));
+            summary.put(
+                    "validation",
+                    JsonWriter.object()
+                            .put(
+                                    "utilizationRelativeError",
+                                    validation.getUtilizationRelativeError())
+                            .put("queueWaitRelativeError", validation.getQueueWaitRelativeError())
+                            .put("overallValid", validation.isOverallValid()));
         }
         return summary;
     }
@@ -126,18 +137,33 @@ public final class RunResultWriter {
     }
 
     private void appendMasterIndex(
-            int runId, String purpose, String paramsChanged, long wallClockMillis, String base) throws IOException {
-        String row = runId + ","
-                + CsvWriter.escape(purpose) + ","
-                + CsvWriter.escape(paramsChanged) + ","
-                + (wallClockMillis / 1000.0) + ","
-                + "Complete" + ","
-                + base + "_timeseries.csv" + ","
-                + base + "_events.csv" + ","
-                + base + "_summary.json" + ","
-                + base + "_config.json";
-        try (BufferedWriter writer = Files.newBufferedWriter(
-                masterIndex, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+            int runId, String purpose, String paramsChanged, long wallClockMillis, String base)
+            throws IOException {
+        String row =
+                runId
+                        + ","
+                        + CsvWriter.escape(purpose)
+                        + ","
+                        + CsvWriter.escape(paramsChanged)
+                        + ","
+                        + (wallClockMillis / 1000.0)
+                        + ","
+                        + "Complete"
+                        + ","
+                        + base
+                        + "_timeseries.csv"
+                        + ","
+                        + base
+                        + "_events.csv"
+                        + ","
+                        + base
+                        + "_summary.json"
+                        + ","
+                        + base
+                        + "_config.json";
+        try (BufferedWriter writer =
+                Files.newBufferedWriter(
+                        masterIndex, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
             writer.write(row);
             writer.newLine();
         }

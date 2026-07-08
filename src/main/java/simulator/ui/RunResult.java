@@ -8,5 +8,4 @@ public record RunResult(
         SimulationConfig config,
         MetricsReport report,
         DataRecorder recorder,
-        long wallClockMillis) {
-}
+        long wallClockMillis) {}

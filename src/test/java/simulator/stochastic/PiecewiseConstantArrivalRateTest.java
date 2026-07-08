@@ -1,9 +1,9 @@
 package simulator.stochastic;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 class PiecewiseConstantArrivalRateTest {
     @Test
@@ -14,9 +14,8 @@ class PiecewiseConstantArrivalRateTest {
 
     @Test
     void integratedRateSumsSegmentContributions() {
-        PiecewiseConstantArrivalRate rate = new PiecewiseConstantArrivalRate(
-                new double[] {0.0, 2.0},
-                new double[] {4.0, 2.0});
+        PiecewiseConstantArrivalRate rate =
+                new PiecewiseConstantArrivalRate(new double[] {0.0, 2.0}, new double[] {4.0, 2.0});
 
         assertEquals(10.0, rate.integratedRate(0.0, 3.0), 1e-9);
     }
@@ -38,6 +37,8 @@ class PiecewiseConstantArrivalRateTest {
     void rejectsMismatchedSegmentLengths() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new PiecewiseConstantArrivalRate(new double[] {0.0, 1.0}, new double[] {3.0}));
+                () ->
+                        new PiecewiseConstantArrivalRate(
+                                new double[] {0.0, 1.0}, new double[] {3.0}));
     }
 }

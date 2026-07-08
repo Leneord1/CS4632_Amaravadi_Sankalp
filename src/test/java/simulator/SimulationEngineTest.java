@@ -1,16 +1,17 @@
 package simulator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
+
 import simulator.config.ArrivalProfile;
 import simulator.config.ServiceTimeModel;
 import simulator.config.SimulationConfig;
 import simulator.data.DataRecorder;
 import simulator.metrics.MetricsCollector;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // End-to-end coverage of the discrete-event loop and its branch paths.
 class SimulationEngineTest {
@@ -28,11 +29,12 @@ class SimulationEngineTest {
     // Dealership arrivals + PDF service model + recorder exercises snapshot and event recording.
     @Test
     void runWithRecorderCapturesSamplesAndEvents() {
-        SimulationConfig config = baseBuilder()
-                .arrivalProfile(ArrivalProfile.DEALERSHIP_DAY)
-                .serviceTimeModel(ServiceTimeModel.PDF)
-                .customerCount(15)
-                .build();
+        SimulationConfig config =
+                baseBuilder()
+                        .arrivalProfile(ArrivalProfile.DEALERSHIP_DAY)
+                        .serviceTimeModel(ServiceTimeModel.PDF)
+                        .customerCount(15)
+                        .build();
         DataRecorder recorder = new DataRecorder();
         SimulationEngine engine = new SimulationEngine(config, recorder);
 
@@ -46,11 +48,12 @@ class SimulationEngineTest {
     // Constant arrivals + legacy service model + no recorder exercises the null-recorder branches.
     @Test
     void runConstantProfileLegacyModelWithoutRecorder() {
-        SimulationConfig config = baseBuilder()
-                .arrivalProfile(ArrivalProfile.CONSTANT)
-                .serviceTimeModel(ServiceTimeModel.LEGACY)
-                .customerCount(0)
-                .build();
+        SimulationConfig config =
+                baseBuilder()
+                        .arrivalProfile(ArrivalProfile.CONSTANT)
+                        .serviceTimeModel(ServiceTimeModel.LEGACY)
+                        .customerCount(0)
+                        .build();
         SimulationEngine engine = new SimulationEngine(config);
 
         engine.run();
@@ -63,20 +66,22 @@ class SimulationEngineTest {
     // Zero starting inventory forces blocked tickets, part orders, and parts-arrival handling.
     @Test
     void runWithPartsShortageTriggersPartsArrivalPath() {
-        SimulationConfig config = baseBuilder()
-                .customerCount(20)
-                .initialPartsQuantityOnHand(0)
-                .partsReorderPoint(5)
-                .partsReorderQuantity(10)
-                .partsLeadTimeHours(1.0)
-                .build();
+        SimulationConfig config =
+                baseBuilder()
+                        .customerCount(20)
+                        .initialPartsQuantityOnHand(0)
+                        .partsReorderPoint(5)
+                        .partsReorderQuantity(10)
+                        .partsLeadTimeHours(1.0)
+                        .build();
         DataRecorder recorder = new DataRecorder();
         SimulationEngine engine = new SimulationEngine(config, recorder);
 
         engine.run();
 
-        boolean sawPartsArrival = recorder.getEvents().stream()
-                .anyMatch(event -> "PARTS_ARRIVAL".equals(event.eventType()));
+        boolean sawPartsArrival =
+                recorder.getEvents().stream()
+                        .anyMatch(event -> "PARTS_ARRIVAL".equals(event.eventType()));
         assertTrue(sawPartsArrival);
     }
 

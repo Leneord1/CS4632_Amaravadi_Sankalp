@@ -1,15 +1,5 @@
 package simulator;
 
-
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Random;
 import simulator.config.ServiceTimeModel;
 import simulator.config.SimulationConfig;
 import simulator.data.DataRecorder;
@@ -32,17 +22,35 @@ import simulator.stochastic.GammaDistribution;
 import simulator.stochastic.PiecewiseConstantArrivalRate;
 import simulator.stochastic.ServiceTimeEquations;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Random;
+
 public class SimulationEngine {
     //  Constants
     private static final double ADVISOR_INTAKE_HOURS = 0.1;
     private static final double PARTS_REQUIREMENT_PROBABILITY = 0.4;
     private static final double SNAPSHOT_INTERVAL_HOURS = 0.25;
-    private static final String[] JOB_TYPES = {"Oil Change", "Brake Service", "Diagnostics", "Transmission"};
+    private static final String[] JOB_TYPES = {
+        "Oil Change", "Brake Service", "Diagnostics", "Transmission"
+    };
 
-    private enum EventType { ARRIVAL, INTAKE_COMPLETE, SERVICE_COMPLETE, PARTS_ARRIVAL, SNAPSHOT }
-
-    private record Event(double time, EventType type, long sequence, Customer customer, ServiceTicket ticket) {
+    private enum EventType {
+        ARRIVAL,
+        INTAKE_COMPLETE,
+        SERVICE_COMPLETE,
+        PARTS_ARRIVAL,
+        SNAPSHOT
     }
+
+    private record Event(
+            double time, EventType type, long sequence, Customer customer, ServiceTicket ticket) {}
 
     private final SimulationConfig config;
     private final Random random;
@@ -58,7 +66,9 @@ public class SimulationEngine {
     private final List<Technician> allTechnicians = new ArrayList<>();
 
     private final PriorityQueue<Event> events =
-            new PriorityQueue<>(Comparator.comparingDouble((Event e) -> e.time).thenComparingLong(e -> e.sequence));
+            new PriorityQueue<>(
+                    Comparator.comparingDouble((Event e) -> e.time)
+                            .thenComparingLong(e -> e.sequence));
     private final Map<ServiceTicket, Customer> customerByTicket = new HashMap<>();
     private final Map<Customer, Double> advisorWaitByCustomer = new HashMap<>();
     private final Map<ServiceTicket, Double> readyTimeByTicket = new HashMap<>();
@@ -84,25 +94,27 @@ public class SimulationEngine {
 
     private static PiecewiseConstantArrivalRate buildArrivalRate(SimulationConfig config) {
         /*
-         Build the arrival rate function based on the configuration's arrival profile.
-         If the profile is CONSTANT, create a PiecewiseConstantArrivalRate with a single
-         constant rate.  If the profile is DEALERSHIP_DAY, use the default dealership day
-         profile and scale it to match the mean arrival rate over the simulation horizon.
-         */
+        Build the arrival rate function based on the configuration's arrival profile.
+        If the profile is CONSTANT, create a PiecewiseConstantArrivalRate with a single
+        constant rate.  If the profile is DEALERSHIP_DAY, use the default dealership day
+        profile and scale it to match the mean arrival rate over the simulation horizon.
+        */
         return switch (config.getArrivalProfile()) {
-            case CONSTANT -> new PiecewiseConstantArrivalRate(
-                    new double[] {0.0},
-                    new double[] {config.getArrivalRate()});
-            case DEALERSHIP_DAY -> PiecewiseConstantArrivalRate.defaultDealershipDay()
-                    .scaledToMeanRate(config.getArrivalRate(), config.getSimulationHorizonHours());
+            case CONSTANT ->
+                    new PiecewiseConstantArrivalRate(
+                            new double[] {0.0}, new double[] {config.getArrivalRate()});
+            case DEALERSHIP_DAY ->
+                    PiecewiseConstantArrivalRate.defaultDealershipDay()
+                            .scaledToMeanRate(
+                                    config.getArrivalRate(), config.getSimulationHorizonHours());
         };
     }
 
     public void run() {
         /*
-            Run the simulation until all events are processed.
-            The simulation clock is advanced
-         */
+           Run the simulation until all events are processed.
+           The simulation clock is advanced
+        */
         config.printConfig("run start");
         scheduleArrivals();
         scheduleSnapshots();
@@ -158,9 +170,15 @@ public class SimulationEngine {
 
     private void scheduleArrivals() {
         //  Schedule customer arrival events based on the Cox process and the configuration.
-        int maxArrivals = config.getCustomerCount() > 0
-                ? config.getCustomerCount()
-                : (int) Math.ceil(config.getArrivalRate() * config.getSimulationHorizonHours() * 3) + 10;
+        int maxArrivals =
+                config.getCustomerCount() > 0
+                        ? config.getCustomerCount()
+                        : (int)
+                                        Math.ceil(
+                                                config.getArrivalRate()
+                                                        * config.getSimulationHorizonHours()
+                                                        * 3)
+                                + 10;
         List<Customer> arrivals =
                 coxProcess.generateArrivals(0.0, config.getSimulationHorizonHours(), maxArrivals);
         for (Customer customer : arrivals) {
@@ -177,7 +195,8 @@ public class SimulationEngine {
     }
 
     private void tryStartIntakes(double now) {
-        // Start intakes for customers in the intake wait queue if there are free advisors available.
+        // Start intakes for customers in the intake wait queue if there are free advisors
+        // available.
         while (!intakeWaitQueue.isEmpty() && !freeAdvisors.isEmpty()) {
             Customer customer = intakeWaitQueue.poll();
             ServiceAdvisor advisor = freeAdvisors.poll();
@@ -187,12 +206,13 @@ public class SimulationEngine {
 
             ServiceTicket ticket = null;
             if (advisor != null) {
-                ticket = advisor.intakeCustomer(
-                        customer,
-                        nextTicketId++,
-                        JOB_TYPES[random.nextInt(JOB_TYPES.length)],
-                        config.getMeanServiceTimeHours(),
-                        config.getMeanServiceTimeHours());
+                ticket =
+                        advisor.intakeCustomer(
+                                customer,
+                                nextTicketId++,
+                                JOB_TYPES[random.nextInt(JOB_TYPES.length)],
+                                config.getMeanServiceTimeHours(),
+                                config.getMeanServiceTimeHours());
             }
             maybeAddPartsRequirement(ticket);
             if (advisor != null) {
@@ -211,7 +231,8 @@ public class SimulationEngine {
         advisor.setAvailable(true);
         freeAdvisors.add(advisor);
 
-        PartsFulfillmentResult result = partsDepartment.requestPartsForTicket(event.ticket, event.time);
+        PartsFulfillmentResult result =
+                partsDepartment.requestPartsForTicket(event.ticket, event.time);
         partsDepartment.printStatus(event.time);
         if (result.isFulfilled()) {
             enqueueReadyTicket(event.ticket, event.time);
@@ -264,7 +285,11 @@ public class SimulationEngine {
                 bay.printOccupancy(now);
             }
 
-            push(now + ticket.getActualLaborTime(), EventType.SERVICE_COMPLETE, customerByTicket.get(ticket), ticket);
+            push(
+                    now + ticket.getActualLaborTime(),
+                    EventType.SERVICE_COMPLETE,
+                    customerByTicket.get(ticket),
+                    ticket);
         }
     }
 
@@ -325,9 +350,9 @@ public class SimulationEngine {
         double meanServiceTime = config.getMeanServiceTimeHours();
         double shapeParameter = config.getGammaShapeParameter();
         if (config.getServiceTimeModel() == ServiceTimeModel.PDF) {
-            double normalizedExperience = ServiceTimeEquations.normalizeExperienceLevel(
-                    technician.getExperienceLevel(),
-                    config.getMaxExperienceLevel());
+            double normalizedExperience =
+                    ServiceTimeEquations.normalizeExperienceLevel(
+                            technician.getExperienceLevel(), config.getMaxExperienceLevel());
             return GammaDistribution.sampleForTechnician(
                     random,
                     meanServiceTime,
@@ -358,15 +383,16 @@ public class SimulationEngine {
                 busyBays++;
             }
         }
-        recorder.recordSample(new TimeSeriesSample(
-                System.currentTimeMillis(),
-                event.time,
-                intakeWaitQueue.size(),
-                jobQueue.size(),
-                busyTechnicians,
-                busyBays,
-                partsOnHand(),
-                metrics.getThroughputMetrics().getRecordedJobs()));
+        recorder.recordSample(
+                new TimeSeriesSample(
+                        System.currentTimeMillis(),
+                        event.time,
+                        intakeWaitQueue.size(),
+                        jobQueue.size(),
+                        busyTechnicians,
+                        busyBays,
+                        partsOnHand(),
+                        metrics.getThroughputMetrics().getRecordedJobs()));
     }
 
     private void recordEvent(double time, String type, ServiceTicket ticket, String detail) {

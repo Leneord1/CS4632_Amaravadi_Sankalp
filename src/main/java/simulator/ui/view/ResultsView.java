@@ -1,12 +1,5 @@
 package simulator.ui.view;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.chart.BarChart;
@@ -20,6 +13,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
 import simulator.config.SimulationConfig;
 import simulator.data.RunResultWriter;
 import simulator.data.TimeSeriesSample;
@@ -28,6 +22,14 @@ import simulator.model.RepairBay;
 import simulator.model.Technician;
 import simulator.ui.Navigator;
 import simulator.ui.RunResult;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class ResultsView implements View {
     private static final Path RESULTS_ROOT = Path.of("results");
@@ -47,13 +49,15 @@ public class ResultsView implements View {
         Label title = new Label("Simulation Results");
         title.getStyleClass().add("app-title");
 
-        VBox layout = new VBox(22,
-                title,
-                buildSummary(),
-                buildUtilizationChart(),
-                buildQueueChart(),
-                buildActions(),
-                exportStatus);
+        VBox layout =
+                new VBox(
+                        22,
+                        title,
+                        buildSummary(),
+                        buildUtilizationChart(),
+                        buildQueueChart(),
+                        buildActions(),
+                        exportStatus);
         layout.setAlignment(Pos.TOP_CENTER);
         layout.getStyleClass().addAll("app-root", "results-root");
 
@@ -71,13 +75,38 @@ public class ResultsView implements View {
         grid.setAlignment(Pos.CENTER);
 
         int row = 0;
-        row = addMetric(grid, row, "Jobs completed", Integer.toString(report.getJobsCompletedPerDay()));
-        row = addMetric(grid, row, "Avg customer wait (h)", fmt(report.getAverageCustomerWaitTime()));
+        row =
+                addMetric(
+                        grid,
+                        row,
+                        "Jobs completed",
+                        Integer.toString(report.getJobsCompletedPerDay()));
+        row =
+                addMetric(
+                        grid,
+                        row,
+                        "Avg customer wait (h)",
+                        fmt(report.getAverageCustomerWaitTime()));
         row = addMetric(grid, row, "Avg service time (h)", fmt(report.getAverageServiceTime()));
-        row = addMetric(grid, row, "Shop technician utilization", fmt(report.getSimulatedShopTechnicianUtilization()));
-        row = addMetric(grid, row, "Shop bay utilization", fmt(report.getSimulatedShopBayUtilization()));
+        row =
+                addMetric(
+                        grid,
+                        row,
+                        "Shop technician utilization",
+                        fmt(report.getSimulatedShopTechnicianUtilization()));
+        row =
+                addMetric(
+                        grid,
+                        row,
+                        "Shop bay utilization",
+                        fmt(report.getSimulatedShopBayUtilization()));
         row = addMetric(grid, row, "Analytical rho", fmt(report.getAnalyticalSystemUtilization()));
-        row = addMetric(grid, row, "Analytical queue wait Wq (h)", fmt(report.getAnalyticalQueueWait()));
+        row =
+                addMetric(
+                        grid,
+                        row,
+                        "Analytical queue wait Wq (h)",
+                        fmt(report.getAnalyticalQueueWait()));
         addMetric(grid, row, "Run time (ms)", Long.toString(result.wallClockMillis()));
         return grid;
     }
@@ -105,18 +134,24 @@ public class ResultsView implements View {
 
         XYChart.Series<String, Number> techSeries = new XYChart.Series<>();
         techSeries.setName("Technicians");
-        for (Map.Entry<Technician, Double> entry : sortedByKey(
-                result.report().getTechnicianUtilization(), e -> e.getKey().getTechnicianId())) {
-            techSeries.getData().add(new XYChart.Data<>(
-                    "T" + entry.getKey().getTechnicianId(), entry.getValue()));
+        for (Map.Entry<Technician, Double> entry :
+                sortedByKey(
+                        result.report().getTechnicianUtilization(),
+                        e -> e.getKey().getTechnicianId())) {
+            techSeries
+                    .getData()
+                    .add(
+                            new XYChart.Data<>(
+                                    "T" + entry.getKey().getTechnicianId(), entry.getValue()));
         }
 
         XYChart.Series<String, Number> baySeries = new XYChart.Series<>();
         baySeries.setName("Bays");
-        for (Map.Entry<RepairBay, Double> entry : sortedByKey(
-                result.report().getBayUtilization(), e -> e.getKey().getBayId())) {
-            baySeries.getData().add(new XYChart.Data<>(
-                    "B" + entry.getKey().getBayId(), entry.getValue()));
+        for (Map.Entry<RepairBay, Double> entry :
+                sortedByKey(result.report().getBayUtilization(), e -> e.getKey().getBayId())) {
+            baySeries
+                    .getData()
+                    .add(new XYChart.Data<>("B" + entry.getKey().getBayId(), entry.getValue()));
         }
 
         chart.getData().add(techSeries);
@@ -192,7 +227,8 @@ public class ResultsView implements View {
     }
 
     private static <K> List<Map.Entry<K, Double>> sortedByKey(
-            Map<K, Double> map, java.util.function.ToIntFunction<Map.Entry<K, Double>> keyExtractor) {
+            Map<K, Double> map,
+            java.util.function.ToIntFunction<Map.Entry<K, Double>> keyExtractor) {
         List<Map.Entry<K, Double>> entries = new ArrayList<>(map.entrySet());
         entries.sort(Comparator.comparingInt(keyExtractor));
         return entries;

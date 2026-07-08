@@ -1,8 +1,8 @@
 package simulator.config;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 class SimulationConfigLoaderTest {
     @Test
@@ -21,12 +21,14 @@ class SimulationConfigLoaderTest {
 
     @Test
     void cliOverridesProperties() {
-        SimulationConfig config = SimulationConfigLoader.load(new String[] {
-            "--arrival-rate=6",
-            "--technicians=5",
-            "--validation-tolerance=0.2",
-            "--service-time-model=LEGACY"
-        });
+        SimulationConfig config =
+                SimulationConfigLoader.load(
+                        new String[] {
+                            "--arrival-rate=6",
+                            "--technicians=5",
+                            "--validation-tolerance=0.2",
+                            "--service-time-model=LEGACY"
+                        });
 
         assertEquals(6.0, config.getArrivalRate(), 1e-9);
         assertEquals(5, config.getTechnicianCount());

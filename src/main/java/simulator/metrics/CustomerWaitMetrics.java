@@ -20,9 +20,7 @@ public class CustomerWaitMetrics {
     private double totalJobDelay;
 
     public void recordCompletedCustomer(
-            Customer customer,
-            double advisorWaitTime,
-            double serviceTime) {
+            Customer customer, double advisorWaitTime, double serviceTime) {
         double queueDelay = 0.0;
         double partsDelay = 0.0;
         ServiceTicket ticket = customer.getTicket();
@@ -31,11 +29,9 @@ public class CustomerWaitMetrics {
             partsDelay = ticket.getPartsDelay();
         }
 
-        double customerWaitTime = MetricsEquations.totalCustomerWaitTime(
-                advisorWaitTime,
-                queueDelay,
-                partsDelay,
-                serviceTime);
+        double customerWaitTime =
+                MetricsEquations.totalCustomerWaitTime(
+                        advisorWaitTime, queueDelay, partsDelay, serviceTime);
         double jobDelay = MetricsEquations.totalJobDelay(queueDelay, partsDelay);
 
         recordedCustomers++;
@@ -58,7 +54,8 @@ public class CustomerWaitMetrics {
     public void recordTicketDelays(ServiceTicket ticket) {
         totalQueueDelay += ticket.getQueueDelay();
         totalPartsDelay += ticket.getPartsDelay();
-        totalJobDelay += MetricsEquations.totalJobDelay(ticket.getQueueDelay(), ticket.getPartsDelay());
+        totalJobDelay +=
+                MetricsEquations.totalJobDelay(ticket.getQueueDelay(), ticket.getPartsDelay());
     }
 
     public double getAverageWaitTime() {

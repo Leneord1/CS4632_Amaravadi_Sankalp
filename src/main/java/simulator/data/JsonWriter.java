@@ -9,8 +9,7 @@ import java.util.Map;
 
 public final class JsonWriter {
 
-    private JsonWriter() {
-    }
+    private JsonWriter() {}
 
     public static JsonObject object() {
         return new JsonObject();

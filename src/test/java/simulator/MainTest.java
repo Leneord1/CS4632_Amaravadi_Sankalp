@@ -1,23 +1,25 @@
 package simulator;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.Test;
+
 import simulator.config.SimulationConfig;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 class MainTest {
 
     @Test
     void runExecutesEngineForSmallConfig() {
-        SimulationConfig config = SimulationConfig.builder()
-                .simulationHorizonHours(2.0)
-                .customerCount(3)
-                .randomSeed(5L)
-                .build();
+        SimulationConfig config =
+                SimulationConfig.builder()
+                        .simulationHorizonHours(2.0)
+                        .customerCount(3)
+                        .randomSeed(5L)
+                        .build();
         Main.run(config);
     }
 
@@ -28,8 +30,8 @@ class MainTest {
 
     @Test
     void mainRethrowsNonUsageIllegalArgument() {
-        assertThrows(IllegalArgumentException.class,
-                () -> Main.main(new String[] {"--technicians=0"}));
+        assertThrows(
+                IllegalArgumentException.class, () -> Main.main(new String[] {"--technicians=0"}));
     }
 
     @Test

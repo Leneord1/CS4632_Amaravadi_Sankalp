@@ -16,8 +16,7 @@ public final class SimulationConfigLoader {
     private static final String DEFAULT_PROPERTIES_RESOURCE = "simulation.properties";
     private static final String CONFIG_ARG_PREFIX = "--config=";
 
-    private SimulationConfigLoader() {
-    }
+    private SimulationConfigLoader() {}
 
     public static SimulationConfig loadDefault() {
         return load(new String[0]);
@@ -81,12 +80,17 @@ public final class SimulationConfigLoader {
     }
 
     private static void loadResourceProperties(Properties properties) {
-        try (InputStream inputStream = SimulationConfigLoader.class.getClassLoader().getResourceAsStream(SimulationConfigLoader.DEFAULT_PROPERTIES_RESOURCE)) {
+        try (InputStream inputStream =
+                SimulationConfigLoader.class
+                        .getClassLoader()
+                        .getResourceAsStream(SimulationConfigLoader.DEFAULT_PROPERTIES_RESOURCE)) {
             if (inputStream != null) {
                 properties.load(inputStream);
             }
         } catch (IOException exception) {
-            throw new IllegalStateException("Failed to load " + SimulationConfigLoader.DEFAULT_PROPERTIES_RESOURCE, exception);
+            throw new IllegalStateException(
+                    "Failed to load " + SimulationConfigLoader.DEFAULT_PROPERTIES_RESOURCE,
+                    exception);
         }
     }
 
@@ -115,18 +119,24 @@ public final class SimulationConfigLoader {
         applyDoubleProperty(properties, "simulation.horizonHours", builder::simulationHorizonHours);
         applyDoubleProperty(properties, "simulation.arrivalRate", builder::arrivalRate);
         applyIntProperty(properties, "simulation.technicianCount", builder::technicianCount);
-        applyDoubleProperty(properties, "simulation.serviceRatePerTechnician", builder::serviceRatePerTechnician);
+        applyDoubleProperty(
+                properties,
+                "simulation.serviceRatePerTechnician",
+                builder::serviceRatePerTechnician);
         applyIntProperty(properties, "simulation.advisorCount", builder::advisorCount);
         applyDoubleProperty(properties, "serviceTime.experienceAlpha", builder::experienceAlpha);
         applyIntProperty(properties, "serviceTime.maxExperienceLevel", builder::maxExperienceLevel);
-        applyDoubleProperty(properties, "serviceTime.gammaShapeParameter", builder::gammaShapeParameter);
+        applyDoubleProperty(
+                properties, "serviceTime.gammaShapeParameter", builder::gammaShapeParameter);
         applyEnumProperty(properties, builder::serviceTimeModel);
         applyArrivalProfileProperty(properties, builder::arrivalProfile);
         applyIntProperty(properties, "parts.reorderPoint", builder::partsReorderPoint);
         applyIntProperty(properties, "parts.reorderQuantity", builder::partsReorderQuantity);
         applyDoubleProperty(properties, "parts.leadTimeHours", builder::partsLeadTimeHours);
-        applyIntProperty(properties, "parts.initialQuantityOnHand", builder::initialPartsQuantityOnHand);
-        applyDoubleProperty(properties, "validation.relativeTolerance", builder::validationRelativeTolerance);
+        applyIntProperty(
+                properties, "parts.initialQuantityOnHand", builder::initialPartsQuantityOnHand);
+        applyDoubleProperty(
+                properties, "validation.relativeTolerance", builder::validationRelativeTolerance);
         applyIntProperty(properties, "simulation.replicationCount", builder::replicationCount);
         applyLongProperty(properties, builder::randomSeed);
     }
@@ -155,7 +165,9 @@ public final class SimulationConfigLoader {
     private static Map<String, String> parseOptions(String[] args) {
         Map<String, String> options = new HashMap<>();
         for (String arg : args) {
-            if (!arg.startsWith("--") || arg.equals("--help") || arg.startsWith(CONFIG_ARG_PREFIX)) {
+            if (!arg.startsWith("--")
+                    || arg.equals("--help")
+                    || arg.startsWith(CONFIG_ARG_PREFIX)) {
                 continue;
             }
 
@@ -171,7 +183,8 @@ public final class SimulationConfigLoader {
         return options;
     }
 
-    private static void applyDoubleProperty(Properties properties, String key, DoubleConsumer setter) {
+    private static void applyDoubleProperty(
+            Properties properties, String key, DoubleConsumer setter) {
         String value = properties.getProperty(key);
         if (value != null) {
             setter.accept(Double.parseDouble(value.trim()));
@@ -192,21 +205,24 @@ public final class SimulationConfigLoader {
         }
     }
 
-    private static void applyEnumProperty(Properties properties, Consumer<ServiceTimeModel> setter) {
+    private static void applyEnumProperty(
+            Properties properties, Consumer<ServiceTimeModel> setter) {
         String value = properties.getProperty("serviceTime.model");
         if (value != null) {
             setter.accept(ServiceTimeModel.valueOf(value.trim().toUpperCase()));
         }
     }
 
-    private static void applyArrivalProfileProperty(Properties properties, Consumer<ArrivalProfile> setter) {
+    private static void applyArrivalProfileProperty(
+            Properties properties, Consumer<ArrivalProfile> setter) {
         String value = properties.getProperty("simulation.arrivalProfile");
         if (value != null) {
             setter.accept(ArrivalProfile.valueOf(value.trim().toUpperCase()));
         }
     }
 
-    private static void applyCliDouble(Map<String, String> options, String key, DoubleConsumer setter) {
+    private static void applyCliDouble(
+            Map<String, String> options, String key, DoubleConsumer setter) {
         String value = options.get(key);
         if (value != null) {
             setter.accept(Double.parseDouble(value));
@@ -227,14 +243,16 @@ public final class SimulationConfigLoader {
         }
     }
 
-    private static void applyCliEnum(Map<String, String> options, Consumer<ServiceTimeModel> setter) {
+    private static void applyCliEnum(
+            Map<String, String> options, Consumer<ServiceTimeModel> setter) {
         String value = options.get("service-time-model");
         if (value != null) {
             setter.accept(ServiceTimeModel.valueOf(value.trim().toUpperCase()));
         }
     }
 
-    private static void applyCliArrivalProfile(Map<String, String> options, Consumer<ArrivalProfile> setter) {
+    private static void applyCliArrivalProfile(
+            Map<String, String> options, Consumer<ArrivalProfile> setter) {
         String value = options.get("arrival-profile");
         if (value != null) {
             setter.accept(ArrivalProfile.valueOf(value.trim().toUpperCase()));

@@ -9,10 +9,10 @@ import java.util.List;
 
 public final class CsvWriter {
 
-    private CsvWriter() {
-    }
+    private CsvWriter() {}
 
-    public static void writeTimeSeries(Path path, List<TimeSeriesSample> samples) throws IOException {
+    public static void writeTimeSeries(Path path, List<TimeSeriesSample> samples)
+            throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write(TimeSeriesSample.csvHeader());
             writer.newLine();
@@ -38,8 +38,11 @@ public final class CsvWriter {
         if (field == null) {
             return "";
         }
-        boolean needsQuoting = field.contains(",") || field.contains("\"")
-                || field.contains("\n") || field.contains("\r");
+        boolean needsQuoting =
+                field.contains(",")
+                        || field.contains("\"")
+                        || field.contains("\n")
+                        || field.contains("\r");
         if (!needsQuoting) {
             return field;
         }

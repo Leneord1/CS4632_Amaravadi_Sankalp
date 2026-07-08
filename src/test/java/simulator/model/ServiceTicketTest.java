@@ -1,9 +1,9 @@
 package simulator.model;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+
+import org.junit.jupiter.api.Test;
 
 class ServiceTicketTest {
     @Test
@@ -31,7 +31,8 @@ class ServiceTicketTest {
 
     @Test
     void technicianAssignmentIsStored() {
-        ServiceTicket ticket = new ServiceTicket(7, "Suspension: Control Arm Replacement", 2.0, 1.0);
+        ServiceTicket ticket =
+                new ServiceTicket(7, "Suspension: Control Arm Replacement", 2.0, 1.0);
         Technician technician = new Technician(9, 3);
         ticket.setAssignedTechnician(technician);
 

@@ -1,9 +1,9 @@
 package simulator.metrics;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 class SimulationValidationMetricsTest {
     @Test
@@ -30,14 +30,9 @@ class SimulationValidationMetricsTest {
         simulatedReport.setAverageCustomerWaitTime(2.722);
 
         SimulationValidationMetrics validationMetrics = new SimulationValidationMetrics();
-        ValidationReport report = validationMetrics.validateAgainstQueueBenchmark(
-                simulatedReport,
-                4.0,
-                3,
-                2.0,
-                0.5,
-                2.0,
-                0.15);
+        ValidationReport report =
+                validationMetrics.validateAgainstQueueBenchmark(
+                        simulatedReport, 4.0, 3, 2.0, 0.5, 2.0, 0.15);
 
         assertTrue(report.getUtilizationRelativeError() > 0.15);
         assertFalseUtilization(report);

@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+
 import simulator.ui.Navigator;
 
 // Landing screen: project title, summary, and primary entry actions.
@@ -24,9 +25,10 @@ public class LandingView implements View {
         Label title = new Label("Service Department Optimization Simulator");
         title.getStyleClass().add("app-title");
 
-        Label subtitle = new Label(
-                "Discrete-event simulation of an automotive dealership service department. "
-                        + "Model staffing, queues, and parts flow to expose bottlenecks.");
+        Label subtitle =
+                new Label(
+                        "Discrete-event simulation of an automotive dealership service department. "
+                                + "Model staffing, queues, and parts flow to expose bottlenecks.");
         subtitle.getStyleClass().add("app-subtitle");
         subtitle.setWrapText(true);
         subtitle.setMaxWidth(560);

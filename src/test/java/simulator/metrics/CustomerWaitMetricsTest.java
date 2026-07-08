@@ -1,10 +1,11 @@
 package simulator.metrics;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
+
 import simulator.model.Customer;
 import simulator.model.ServiceTicket;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CustomerWaitMetricsTest {
     @Test

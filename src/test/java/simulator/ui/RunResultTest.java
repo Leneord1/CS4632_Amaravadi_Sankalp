@@ -1,12 +1,13 @@
 package simulator.ui;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import org.junit.jupiter.api.Test;
+
 import simulator.config.SimulationConfig;
 import simulator.data.DataRecorder;
 import simulator.metrics.MetricsReport;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 class RunResultTest {
 

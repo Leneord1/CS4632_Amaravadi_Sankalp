@@ -1,9 +1,14 @@
 package simulator.ui;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+
 import org.junit.jupiter.api.Test;
+
 import simulator.SimulationEngine;
 import simulator.config.SimulationConfig;
 import simulator.data.DataRecorder;
@@ -20,17 +25,15 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class ResultsViewTest extends JavaFxTestBase {
 
     private static RunResult sampleRun() {
-        SimulationConfig config = SimulationConfig.builder()
-                .simulationHorizonHours(3.0)
-                .customerCount(10)
-                .randomSeed(11L)
-                .build();
+        SimulationConfig config =
+                SimulationConfig.builder()
+                        .simulationHorizonHours(3.0)
+                        .customerCount(10)
+                        .randomSeed(11L)
+                        .build();
         DataRecorder recorder = new DataRecorder();
         SimulationEngine engine = new SimulationEngine(config, recorder);
         engine.run();
@@ -76,13 +79,15 @@ class ResultsViewTest extends JavaFxTestBase {
             return;
         }
         try (Stream<Path> paths = Files.walk(root)) {
-            paths.sorted(Comparator.reverseOrder()).forEach(path -> {
-                try {
-                    Files.deleteIfExists(path);
-                } catch (IOException ignored) {
-                    // Best-effort cleanup of generated export artifacts.
-                }
-            });
+            paths.sorted(Comparator.reverseOrder())
+                    .forEach(
+                            path -> {
+                                try {
+                                    Files.deleteIfExists(path);
+                                } catch (IOException ignored) {
+                                    // Best-effort cleanup of generated export artifacts.
+                                }
+                            });
         }
     }
 }

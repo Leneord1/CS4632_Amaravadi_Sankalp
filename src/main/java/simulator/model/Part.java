@@ -28,9 +28,14 @@ public class Part {
     }
 
     public void printAvailability(int requestedQuantity) {
-        LOGGER.info(String.format(
-                "[Part %d] %s on-hand=%d requested=%d fillable=%b",
-                partId, description, quantityOnHand, requestedQuantity, quantityOnHand >= requestedQuantity));
+        LOGGER.info(
+                String.format(
+                        "[Part %d] %s on-hand=%d requested=%d fillable=%b",
+                        partId,
+                        description,
+                        quantityOnHand,
+                        requestedQuantity,
+                        quantityOnHand >= requestedQuantity));
     }
 
     public int getPartId() {

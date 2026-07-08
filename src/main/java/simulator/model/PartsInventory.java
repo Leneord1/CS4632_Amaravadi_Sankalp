@@ -1,11 +1,12 @@
 package simulator.model;
 
+import simulator.inventory.PartsInventoryEquations;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import simulator.inventory.PartsInventoryEquations;
 
 public class PartsInventory {
     private static final Logger LOGGER = Logger.getLogger(PartsInventory.class.getName());
@@ -41,7 +42,8 @@ public class PartsInventory {
         }
 
         part.setQuantityOnHand(
-                PartsInventoryEquations.inventoryAfterFulfillment(part.getQuantityOnHand(), quantity));
+                PartsInventoryEquations.inventoryAfterFulfillment(
+                        part.getQuantityOnHand(), quantity));
         return true;
     }
 
@@ -83,7 +85,8 @@ public class PartsInventory {
         if (part == null) {
             throw new IllegalArgumentException("Part cannot be null");
         }
-        return PartsInventoryEquations.shouldReorder(part.getQuantityOnHand(), part.getReorderPoint());
+        return PartsInventoryEquations.shouldReorder(
+                part.getQuantityOnHand(), part.getReorderPoint());
     }
 
     public void receiveStock(int partId, int quantity) {
@@ -92,6 +95,7 @@ public class PartsInventory {
         if (part == null) {
             throw new IllegalArgumentException("Unknown part id: " + partId);
         }
-        part.setQuantityOnHand(PartsInventoryEquations.inventoryAfterReorder(part.getQuantityOnHand(), quantity));
+        part.setQuantityOnHand(
+                PartsInventoryEquations.inventoryAfterReorder(part.getQuantityOnHand(), quantity));
     }
 }

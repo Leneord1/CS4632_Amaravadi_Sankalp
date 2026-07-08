@@ -1,19 +1,21 @@
 package simulator.model;
 
-import org.junit.jupiter.api.Test;
-import simulator.config.ServiceTimeModel;
-import simulator.config.SimulationConfig;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Test;
+
+import simulator.config.ServiceTimeModel;
+import simulator.config.SimulationConfig;
+
 class TechnicianTest {
     @Test
     void serviceTimeScalesWithExperience() {
         Technician technician = new Technician(4, 6);
-        technician.setCurrentTicket(new ServiceTicket(10, "Engine: Timing Cover Gasket R&R", 22.0, 20.8));
+        technician.setCurrentTicket(
+                new ServiceTicket(10, "Engine: Timing Cover Gasket R&R", 22.0, 20.8));
 
         assertEquals(15.4, technician.getServiceTime(), 1e-9);
     }
@@ -66,11 +68,12 @@ class TechnicianTest {
 
     @Test
     void pdfServiceTimeUsesConfiguredAlpha() {
-        SimulationConfig config = SimulationConfig.builder()
-                .experienceAlpha(1.0)
-                .maxExperienceLevel(10)
-                .serviceTimeModel(ServiceTimeModel.PDF)
-                .build();
+        SimulationConfig config =
+                SimulationConfig.builder()
+                        .experienceAlpha(1.0)
+                        .maxExperienceLevel(10)
+                        .serviceTimeModel(ServiceTimeModel.PDF)
+                        .build();
         Technician technician = new Technician(4, 10, config);
         technician.setCurrentTicket(new ServiceTicket(13, "Brakes", 2.0, 2.0));
 

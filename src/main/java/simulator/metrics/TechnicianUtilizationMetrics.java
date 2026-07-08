@@ -1,10 +1,11 @@
 package simulator.metrics;
 
+import simulator.model.ServiceTicket;
+import simulator.model.Technician;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import simulator.model.ServiceTicket;
-import simulator.model.Technician;
 
 public class TechnicianUtilizationMetrics {
     private final Map<Technician, Double> busyHoursByTechnician = new HashMap<>();
@@ -21,7 +22,8 @@ public class TechnicianUtilizationMetrics {
             return;
         }
 
-        double updatedBusyHours = busyHoursByTechnician.getOrDefault(technician, 0.0) + serviceTimeHours;
+        double updatedBusyHours =
+                busyHoursByTechnician.getOrDefault(technician, 0.0) + serviceTimeHours;
         busyHoursByTechnician.put(technician, updatedBusyHours);
         technicianUtilization.put(
                 technician,
@@ -54,10 +56,9 @@ public class TechnicianUtilizationMetrics {
     }
 
     public double getShopTechnicianUtilization() {
-        double totalBusyHours = busyHoursByTechnician.values().stream().mapToDouble(Double::doubleValue).sum();
+        double totalBusyHours =
+                busyHoursByTechnician.values().stream().mapToDouble(Double::doubleValue).sum();
         return MetricsEquations.shopResourceUtilization(
-                totalBusyHours,
-                busyHoursByTechnician.size(),
-                simulationHorizonHours);
+                totalBusyHours, busyHoursByTechnician.size(), simulationHorizonHours);
     }
 }

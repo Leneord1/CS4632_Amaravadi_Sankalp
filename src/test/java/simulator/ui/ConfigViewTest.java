@@ -1,16 +1,18 @@
 package simulator.ui;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import javafx.scene.control.TextField;
+
 import org.junit.jupiter.api.Test;
+
 import simulator.ui.view.ConfigView;
 import simulator.ui.view.LandingView;
 import simulator.ui.view.ResultsView;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ConfigViewTest extends JavaFxTestBase {
 
@@ -28,7 +30,8 @@ class ConfigViewTest extends JavaFxTestBase {
         runFx(() -> findButtons(view.getRoot()).get(0).fire());
 
         long deadline = System.currentTimeMillis() + 15_000;
-        while (!(navigator.lastView instanceof ResultsView) && System.currentTimeMillis() < deadline) {
+        while (!(navigator.lastView instanceof ResultsView)
+                && System.currentTimeMillis() < deadline) {
             Thread.sleep(50);
         }
         assertTrue(navigator.lastView instanceof ResultsView);
@@ -39,11 +42,12 @@ class ConfigViewTest extends JavaFxTestBase {
         RecordingNavigator navigator = new RecordingNavigator();
         ConfigView view = buildView(navigator);
 
-        runFx(() -> {
-            List<TextField> fields = findTextFields(view.getRoot());
-            fields.get(0).setText("not-a-number");
-            findButtons(view.getRoot()).get(0).fire();
-        });
+        runFx(
+                () -> {
+                    List<TextField> fields = findTextFields(view.getRoot());
+                    fields.get(0).setText("not-a-number");
+                    findButtons(view.getRoot()).get(0).fire();
+                });
 
         assertEquals(0, navigator.navigateCount);
     }
@@ -53,11 +57,12 @@ class ConfigViewTest extends JavaFxTestBase {
         RecordingNavigator navigator = new RecordingNavigator();
         ConfigView view = buildView(navigator);
 
-        runFx(() -> {
-            List<TextField> fields = findTextFields(view.getRoot());
-            fields.get(2).setText("0");
-            findButtons(view.getRoot()).get(0).fire();
-        });
+        runFx(
+                () -> {
+                    List<TextField> fields = findTextFields(view.getRoot());
+                    fields.get(2).setText("0");
+                    findButtons(view.getRoot()).get(0).fire();
+                });
 
         assertEquals(0, navigator.navigateCount);
     }

@@ -49,10 +49,19 @@ public final class SimulationConfig {
     }
 
     public void printConfig(String label) {
-        LOGGER.info(() -> String.format(
-                "[Config] %s horizon=%.1fh lambda=%.2f arrival=%s techs=%d mu=%.2f advisors=%d model=%s",
-                label, simulationHorizonHours, arrivalRate, arrivalProfile, technicianCount,
-                serviceRatePerTechnician, advisorCount, serviceTimeModel));
+        LOGGER.info(
+                () ->
+                        String.format(
+                                "[Config] %s horizon=%.1fh lambda=%.2f arrival=%s techs=%d mu=%.2f"
+                                        + " advisors=%d model=%s",
+                                label,
+                                simulationHorizonHours,
+                                arrivalRate,
+                                arrivalProfile,
+                                technicianCount,
+                                serviceRatePerTechnician,
+                                advisorCount,
+                                serviceTimeModel));
     }
 
     public static Builder builder() {
@@ -303,14 +312,17 @@ public final class SimulationConfig {
             if (gammaShapeParameter <= 0.0) {
                 throw new IllegalArgumentException("gammaShapeParameter must be positive");
             }
-            if (partsReorderPoint < 0 || partsReorderQuantity < 0 || initialPartsQuantityOnHand < 0) {
+            if (partsReorderPoint < 0
+                    || partsReorderQuantity < 0
+                    || initialPartsQuantityOnHand < 0) {
                 throw new IllegalArgumentException("parts inventory values must be non-negative");
             }
             if (partsLeadTimeHours < 0.0) {
                 throw new IllegalArgumentException("partsLeadTimeHours must be non-negative");
             }
             if (validationRelativeTolerance < 0.0) {
-                throw new IllegalArgumentException("validationRelativeTolerance must be non-negative");
+                throw new IllegalArgumentException(
+                        "validationRelativeTolerance must be non-negative");
             }
             if (replicationCount <= 0) {
                 throw new IllegalArgumentException("replicationCount must be positive");

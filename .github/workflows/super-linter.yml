@@ -28,3 +28,6 @@ jobs:
           DEFAULT_BRANCH: "main"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JAVA_FILE_NAME: checkstyle.xml
+          # google-java-format only enforces Google style (2-space); this repo
+          # uses AOSP (4-space), enforced by fmt-maven-plugin in build.yml.
+          VALIDATE_GOOGLE_JAVA_FORMAT: false

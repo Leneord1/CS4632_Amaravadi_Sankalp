@@ -1,12 +1,13 @@
 package simulator.metrics;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
+
 import simulator.model.RepairBay;
 import simulator.model.ServiceTicket;
 import simulator.model.Technician;
 import simulator.model.TicketStatus;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TechnicianUtilizationMetricsTest {
     @Test

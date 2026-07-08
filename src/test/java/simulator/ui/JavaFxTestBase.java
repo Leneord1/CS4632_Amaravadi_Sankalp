@@ -39,15 +39,16 @@ abstract class JavaFxTestBase {
         initToolkit();
         CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<Throwable> failure = new AtomicReference<>();
-        Platform.runLater(() -> {
-            try {
-                action.run();
-            } catch (Throwable throwable) {
-                failure.set(throwable);
-            } finally {
-                latch.countDown();
-            }
-        });
+        Platform.runLater(
+                () -> {
+                    try {
+                        action.run();
+                    } catch (Throwable throwable) {
+                        failure.set(throwable);
+                    } finally {
+                        latch.countDown();
+                    }
+                });
         awaitLatch(latch, 15);
         if (failure.get() != null) {
             throw new AssertionError("FX action failed", failure.get());
