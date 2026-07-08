@@ -44,7 +44,7 @@ public final class RunResultWriter {
         return sessionDir;
     }
 
-    public String writeRun(
+    public void writeRun(
             int runId,
             String purpose,
             String paramsChanged,
@@ -62,7 +62,6 @@ public final class RunResultWriter {
                 sessionDir.resolve(base + "_config.json"),
                 buildConfigJson(config).toString());
         appendMasterIndex(runId, purpose, paramsChanged, wallClockMillis, base);
-        return base;
     }
 
     private static JsonObject buildSummaryJson(

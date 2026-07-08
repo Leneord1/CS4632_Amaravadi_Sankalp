@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Random;
+import simulator.config.ServiceTimeModel;
 import simulator.config.SimulationConfig;
 import simulator.data.DataRecorder;
 import simulator.data.EventRecord;
@@ -112,6 +113,11 @@ public class SimulationEngine {
         metrics.report();
     }
 
+    // Metrics collected during the last run; used by callers that need a report.
+    public MetricsCollector getMetrics() {
+        return metrics;
+    }
+
     private void buildResources() {
         for (int i = 1; i <= config.getAdvisorCount(); i++) {
             freeAdvisors.add(new ServiceAdvisor(i));
@@ -171,7 +177,7 @@ public class SimulationEngine {
                         nextTicketId++,
                         JOB_TYPES[random.nextInt(JOB_TYPES.length)],
                         config.getMeanServiceTimeHours(),
-                        sampleServiceTime());
+                        config.getMeanServiceTimeHours());
             }
             maybeAddPartsRequirement(ticket);
             if (advisor != null) {
@@ -236,6 +242,7 @@ public class SimulationEngine {
             ticket.setStatus(TicketStatus.IN_PROGRESS);
 
             if (technician != null) {
+                ticket.setActualLaborTime(sampleServiceTime(technician));
                 technician.printAssignment(ticket);
             }
             if (bay != null) {
@@ -299,10 +306,22 @@ public class SimulationEngine {
         }
     }
 
-    private double sampleServiceTime() {
+    private double sampleServiceTime(Technician technician) {
         double meanServiceTime = config.getMeanServiceTimeHours();
-        double scale = ServiceTimeEquations.gammaScaleParameter(meanServiceTime, config.getGammaShapeParameter());
-        return GammaDistribution.sample(random, config.getGammaShapeParameter(), scale);
+        double shapeParameter = config.getGammaShapeParameter();
+        if (config.getServiceTimeModel() == ServiceTimeModel.PDF) {
+            double normalizedExperience = ServiceTimeEquations.normalizeExperienceLevel(
+                    technician.getExperienceLevel(),
+                    config.getMaxExperienceLevel());
+            return GammaDistribution.sampleForTechnician(
+                    random,
+                    meanServiceTime,
+                    normalizedExperience,
+                    config.getExperienceAlpha(),
+                    shapeParameter);
+        }
+        double scale = ServiceTimeEquations.gammaScaleParameter(meanServiceTime, shapeParameter);
+        return GammaDistribution.sample(random, shapeParameter, scale);
     }
 
     private void push(double time, EventType type, Customer customer, ServiceTicket ticket) {

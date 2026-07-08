@@ -52,3 +52,34 @@
 .btn.primary:hover {
     -fx-background-color: #ffbc4a;
 }
+
+/* Config form */
+.form-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #c4cddd;
+}
+
+.form-field {
+    -fx-background-radius: 6;
+    -fx-background-color: #0d1420;
+    -fx-text-fill: #f5f7fa;
+    -fx-prompt-text-fill: #5f6c82;
+}
+
+/* Results metrics */
+.metric-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #9aa7bd;
+}
+
+.metric-value {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f5f7fa;
+}
+
+/* Keep the scroll container transparent so the page gradient shows through */
+.results-scroll,
+.results-scroll > .viewport {
+    -fx-background-color: transparent;
+}

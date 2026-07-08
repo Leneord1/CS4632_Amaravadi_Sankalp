@@ -34,9 +34,7 @@ public class LandingView implements View {
 
         Button newRun = new Button("New Simulation");
         newRun.getStyleClass().addAll("btn", "primary");
-        newRun.setOnAction(e -> {
-            // Configuration screen wiring lands in the next feature.
-        });
+        newRun.setOnAction(e -> navigator.navigateTo(new ConfigView(navigator)));
 
         Button exit = new Button("Exit");
         exit.getStyleClass().add("btn");
