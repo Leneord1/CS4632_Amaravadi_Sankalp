@@ -51,6 +51,10 @@ public class CoxProcess {
     }
 
     public double sampleNextArrivalTime(double afterTimeHours, double horizonEndHours) {
+        /*
+            Use thinning method to sample the next arrival time
+            from a non-homogeneous Poisson process.
+         */
         if (afterTimeHours >= horizonEndHours) {
             return -1.0;
         }
@@ -75,6 +79,10 @@ public class CoxProcess {
     }
 
     public List<Customer> generateArrivals(double startTimeHours, double endTimeHours, int maxArrivals) {
+        /*
+            Generate a list of customer arrivals using the thinning method
+            for a non-homogeneous Poisson process.
+         */
         List<Customer> arrivals = new ArrayList<>();
         double nextTime = startTimeHours;
 

@@ -7,6 +7,8 @@ public final class PoissonDistribution {
     }
 
     public static double probabilityExactlyNArrivals(int n, double lambda, double timeHours) {
+        //  Validate inputs
+
         if (n < 0 || lambda < 0.0 || timeHours < 0.0) {
             throw new IllegalArgumentException("n, lambda, and time must be non-negative");
         }
@@ -16,6 +18,7 @@ public final class PoissonDistribution {
     }
 
     public static double probabilityExactlyNArrivals(int n, double integratedIntensity) {
+        //  Validate inputs
         if (n < 0 || integratedIntensity < 0.0) {
             throw new IllegalArgumentException("n and integrated intensity must be non-negative");
         }
@@ -26,6 +29,7 @@ public final class PoissonDistribution {
     }
 
     public static double sampleExponentialInterArrival(Random random, double lambda) {
+        //  Validate inputs
         if (lambda <= 0.0) {
             throw new IllegalArgumentException("Lambda must be positive");
         }
@@ -33,6 +37,7 @@ public final class PoissonDistribution {
     }
 
     public static int samplePoisson(Random random, double lambda) {
+        //  Validate inputs
         if (lambda < 0.0) {
             throw new IllegalArgumentException("Lambda must be non-negative");
         }

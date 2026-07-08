@@ -13,6 +13,7 @@ public class JobQueue {
     }
 
     public ServiceTicket dequeue() {
+        // Remove and return the first ticket in the queue, or return null if the queue is empty
         if (queue.isEmpty()) {
             return null;
         }
@@ -21,6 +22,7 @@ public class JobQueue {
     }
 
     public void printQueueDepth(String label) {
+        //  Print the current depth of the queue with the given label
         LOGGER.info(String.format("[JobQueue] %s depth=%d", label, queue.size()));
     }
 

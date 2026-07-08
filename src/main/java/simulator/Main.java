@@ -24,6 +24,8 @@ public class Main {
     }
 
     private static SimulationConfig promptForSettings(SimulationConfig config) {
+        //  Prompt the user for the number of technicians, advisors, and customers,
+        //  using the current config values as defaults
         Scanner userInput = new Scanner(System.in);
         int technicianCount = readInt(userInput, "Number of technicians", 1);
         int advisorCount = readInt(userInput, "Number of advisors", 1);
@@ -36,6 +38,7 @@ public class Main {
     }
 
     private static int readInt(Scanner scanner, String label, int minValue) {
+        //  Prompt the user for an integer value with the given label and minimum value.
         while (true) {
             LOGGER.info(() -> String.format("%s [%d]: ", label, minValue));
             if (!scanner.hasNextLine()) {
@@ -58,6 +61,7 @@ public class Main {
     }
 
     static void run(SimulationConfig config) {
+        //  Run the simulation with the given configuration and log the results
         if (LOGGER.isLoggable(Level.INFO)) {
             LOGGER.info("Service Department Operational Optimization Simulator");
             LOGGER.info(formatConfig(config));
@@ -68,6 +72,7 @@ public class Main {
     }
 
     private static String formatConfig(SimulationConfig config) {
+        //  Format the simulation configuration as a string for logging
         return String.format(
                 "Config horizon=%.1fh lambda=%.2f c=%d mu=%.2f advisors=%d alpha=%.2f k=%.1f "
                         + "reorder(r=%d,Q=%d,L=%.1fh) tolerance=%.2f replications=%d seed=%d model=%s",

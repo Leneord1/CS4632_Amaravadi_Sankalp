@@ -35,6 +35,10 @@ public class Technician {
     }
 
     public double getServiceTime() {
+        /*
+        Calculate the service time based on
+        the current ticket and the technician's experience level
+         */
         if (currentTicket == null) {
             return 0.0;
         }
@@ -58,6 +62,7 @@ public class Technician {
     }
 
     public void printAssignment(ServiceTicket ticket) {
+        // Log the assignment of a ticket to this technician
         LOGGER.info(String.format(
                 "[Technician %d] start ticket #%d exp=%d serviceTime=%.2fh",
                 technicianId, ticket.getTicketId(), experienceLevel, ticket.getActualLaborTime()));

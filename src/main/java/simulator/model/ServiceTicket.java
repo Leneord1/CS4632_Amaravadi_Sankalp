@@ -19,6 +19,7 @@ public class ServiceTicket {
     private double partsDelay;
 
     public ServiceTicket(int ticketId, String jobType, double estimatedLaborTime, double actualLaborTime) {
+        // Initialize the ServiceTicket with the provided parameters and default values for status, queueDelay, and partsDelay.
         this.ticketId = ticketId;
         this.jobType = jobType;
         this.estimatedLaborTime = estimatedLaborTime;
@@ -29,6 +30,7 @@ public class ServiceTicket {
     }
 
     public void printStatus(String stage) {
+        // Log the current status of the ticket, including its ID, stage, status, actual labor time, queue delay, and parts delay.
         LOGGER.info(String.format(
                 "[Ticket #%d] %s status=%s labor=%.2fh queueDelay=%.2fh partsDelay=%.2fh",
                 ticketId, stage, status, actualLaborTime, queueDelay, partsDelay));

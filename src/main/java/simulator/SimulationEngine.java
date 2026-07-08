@@ -33,6 +33,7 @@ import simulator.stochastic.PiecewiseConstantArrivalRate;
 import simulator.stochastic.ServiceTimeEquations;
 
 public class SimulationEngine {
+    //  Constants
     private static final double ADVISOR_INTAKE_HOURS = 0.1;
     private static final double PARTS_REQUIREMENT_PROBABILITY = 0.4;
     private static final double SNAPSHOT_INTERVAL_HOURS = 0.25;
@@ -82,6 +83,12 @@ public class SimulationEngine {
     }
 
     private static PiecewiseConstantArrivalRate buildArrivalRate(SimulationConfig config) {
+        /*
+         Build the arrival rate function based on the configuration's arrival profile.
+         If the profile is CONSTANT, create a PiecewiseConstantArrivalRate with a single
+         constant rate.  If the profile is DEALERSHIP_DAY, use the default dealership day
+         profile and scale it to match the mean arrival rate over the simulation horizon.
+         */
         return switch (config.getArrivalProfile()) {
             case CONSTANT -> new PiecewiseConstantArrivalRate(
                     new double[] {0.0},
@@ -92,6 +99,10 @@ public class SimulationEngine {
     }
 
     public void run() {
+        /*
+            Run the simulation until all events are processed.
+            The simulation clock is advanced
+         */
         config.printConfig("run start");
         scheduleArrivals();
         scheduleSnapshots();
@@ -113,12 +124,13 @@ public class SimulationEngine {
         metrics.report();
     }
 
-    // Metrics collected during the last run; used by callers that need a report.
     public MetricsCollector getMetrics() {
+        // Metrics collected during the last run; used by callers that need a report.
         return metrics;
     }
 
     private void buildResources() {
+        // Build the service advisors and technicians based on the configuration.
         for (int i = 1; i <= config.getAdvisorCount(); i++) {
             freeAdvisors.add(new ServiceAdvisor(i));
         }
@@ -134,6 +146,7 @@ public class SimulationEngine {
     }
 
     private void scheduleSnapshots() {
+        //  Schedule snapshot events at regular intervals throughout the simulation horizon.
         if (recorder == null) {
             return;
         }
@@ -144,6 +157,7 @@ public class SimulationEngine {
     }
 
     private void scheduleArrivals() {
+        //  Schedule customer arrival events based on the Cox process and the configuration.
         int maxArrivals = config.getCustomerCount() > 0
                 ? config.getCustomerCount()
                 : (int) Math.ceil(config.getArrivalRate() * config.getSimulationHorizonHours() * 3) + 10;
@@ -163,6 +177,7 @@ public class SimulationEngine {
     }
 
     private void tryStartIntakes(double now) {
+        // Start intakes for customers in the intake wait queue if there are free advisors available.
         while (!intakeWaitQueue.isEmpty() && !freeAdvisors.isEmpty()) {
             Customer customer = intakeWaitQueue.poll();
             ServiceAdvisor advisor = freeAdvisors.poll();

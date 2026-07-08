@@ -15,6 +15,7 @@ public class ServiceAdvisor {
     }
 
     public ServiceTicket intakeCustomer(Customer customer, int ticketId, String jobType, double estimatedLaborTime, double actualLaborTime) {
+        //  Intake a new customer and assign them to this advisor
         currentCustomer = customer;
         isAvailable = false;
         customer.setAssignedAdvisor(this);

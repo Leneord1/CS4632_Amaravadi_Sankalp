@@ -6,8 +6,11 @@ public final class GammaDistribution {
     private GammaDistribution() {
     }
 
-    // Samples T_i ~ Gamma(k, theta_i) for service times.
     public static double sample(Random random, double shapeParameter, double scaleParameter) {
+        /*
+            The method uses the fact that a gamma distribution with shape parameter k
+            and scale parameter θ
+         */
         if (shapeParameter <= 0.0 || scaleParameter <= 0.0) {
             throw new IllegalArgumentException("shapeParameter and scaleParameter must be positive");
         }
@@ -28,6 +31,7 @@ public final class GammaDistribution {
     }
 
     public static double sampleForTechnician(
+            //  Samples T_i ~ Gamma(k, theta_i) for service times.
             Random random,
             double baseMeanServiceTime,
             double experienceLevel,

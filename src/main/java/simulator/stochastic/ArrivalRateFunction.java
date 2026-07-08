@@ -5,6 +5,11 @@ public interface ArrivalRateFunction {
     double rateAt(double timeHours);
 
     default double integratedRate(double startTimeHours, double endTimeHours) {
+        /*
+            Use the trapezoidal rule to integrate
+            the arrival rate function over the given
+            time interval.
+         */
         if (endTimeHours <= startTimeHours) {
             return 0.0;
         }
@@ -21,6 +26,8 @@ public interface ArrivalRateFunction {
     }
 
     default double maxRate(double startTimeHours, double endTimeHours) {
+        //  Use a simple sampling method to find the maximum arrival
+        //  rate over the given time interval.
         double maxRate = 0.0;
         double step = Math.min(0.05, (endTimeHours - startTimeHours) / 200.0);
         if (step <= 0.0) {

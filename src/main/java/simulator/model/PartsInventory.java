@@ -46,6 +46,7 @@ public class PartsInventory {
     }
 
     public boolean isPartAvailable(int partId, int quantity) {
+        // Check if the part exists in the inventory
         Part part = partsById.get(partId);
         if (part == null) {
             return false;
@@ -54,6 +55,7 @@ public class PartsInventory {
     }
 
     public boolean areRequirementsAvailable(Iterable<PartRequirement> requirements) {
+        // Check if any of the required parts are unavailable
         for (PartRequirement requirement : requirements) {
             if (!isPartAvailable(requirement.partId(), requirement.quantity())) {
                 return true;
@@ -63,6 +65,7 @@ public class PartsInventory {
     }
 
     public boolean fulfillRequirements(Iterable<PartRequirement> requirements) {
+        // Check if all required parts are available before fulfilling the requirements
         if (areRequirementsAvailable(requirements)) {
             return false;
         }
@@ -76,10 +79,15 @@ public class PartsInventory {
     }
 
     public boolean shouldReorder(Part part) {
+        // Check if the part exists in the inventory
+        if (part == null) {
+            throw new IllegalArgumentException("Part cannot be null");
+        }
         return PartsInventoryEquations.shouldReorder(part.getQuantityOnHand(), part.getReorderPoint());
     }
 
     public void receiveStock(int partId, int quantity) {
+        //  Check if the part exists in the inventory
         Part part = partsById.get(partId);
         if (part == null) {
             throw new IllegalArgumentException("Unknown part id: " + partId);
