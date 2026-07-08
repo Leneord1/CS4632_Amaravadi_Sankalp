@@ -37,9 +37,7 @@ public class Main {
 
     private static int readInt(Scanner scanner, String label, int minValue) {
         while (true) {
-            if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.info(String.format("%s [%d]: ", label, minValue));
-            }
+            LOGGER.info(() -> String.format("%s [%d]: ", label, minValue));
             if (!scanner.hasNextLine()) {
                 return minValue;
             }
@@ -53,14 +51,9 @@ public class Main {
                     return value;
                 }
             } catch (NumberFormatException ignored) {
-                if(LOGGER.isLoggable(Level.INFO)) {
-                    LOGGER.info("Invalid input. Please enter a whole number.");
-
-                }
+                LOGGER.info(() -> "Invalid input. Please enter a whole number.");
             }
-            if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.info(String.format("Enter a whole number >= %d.", minValue));
-            }
+            LOGGER.info(() -> String.format("Enter a whole number >= %d.", minValue));
         }
     }
 
