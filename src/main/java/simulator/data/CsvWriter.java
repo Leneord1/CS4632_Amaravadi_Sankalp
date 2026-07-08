@@ -25,7 +25,7 @@ public final class CsvWriter {
 
     public static void writeEvents(Path path, List<EventRecord> events) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            writer.write(EventRecord.csvHeader());
+            writer.write(EventRecord.CSV_HEADER);
             writer.newLine();
             for (EventRecord event : events) {
                 writer.write(event.toCsvRow(escape(event.detail())));

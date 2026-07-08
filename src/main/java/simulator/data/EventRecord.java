@@ -7,9 +7,7 @@ public record EventRecord(
         int ticketId,
         String detail) {
 
-    public static String csvHeader() {
-        return "sim_time_hours,event_type,ticket_id,detail";
-    }
+    public static final String CSV_HEADER = "sim_time_hours,event_type,ticket_id,detail";
 
     public String toCsvRow(String escapedDetail) {
         return simTimeHours + ","

@@ -49,7 +49,7 @@ public final class SimulationConfig {
     }
 
     public void printConfig(String label) {
-        LOGGER.info(String.format(
+        LOGGER.info(() -> String.format(
                 "[Config] %s horizon=%.1fh lambda=%.2f arrival=%s techs=%d mu=%.2f advisors=%d model=%s",
                 label, simulationHorizonHours, arrivalRate, arrivalProfile, technicianCount,
                 serviceRatePerTechnician, advisorCount, serviceTimeModel));
