@@ -100,6 +100,6 @@ class SimulationEngineTest {
         SimulationConfig config = baseBuilder().customerCount(1).build();
         SimulationEngine engine = new SimulationEngine(config);
         engine.run();
-        assertEquals(config.getRandomSeed(), 7L);
+        assertEquals(7L, config.getRandomSeed());
     }
 }

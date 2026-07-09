@@ -41,7 +41,7 @@ class DataWritersTest {
     @Test
     void writeEventsEscapesDetailField(@TempDir Path dir) throws IOException {
         Path file = dir.resolve("events.csv");
-        EventRecord event = new EventRecord(2.0, "ARRIVAL", 7, "note,with,comma");
+        EventRecord event = new EventRecord(1000L, 2.0, "ARRIVAL", 7, "note,with,comma");
         CsvWriter.writeEvents(file, List.of(event));
 
         List<String> lines = Files.readAllLines(file);
@@ -57,8 +57,8 @@ class DataWritersTest {
 
     @Test
     void eventRecordRowUsesEscapedDetail() {
-        EventRecord event = new EventRecord(1.0, "SNAPSHOT", -1, "raw");
-        assertEquals("1.0,SNAPSHOT,-1,raw", event.toCsvRow("raw"));
+        EventRecord event = new EventRecord(500L, 1.0, "SNAPSHOT", -1, "raw");
+        assertEquals("500,1.0,SNAPSHOT,-1,raw", event.toCsvRow("raw"));
     }
 
     @Test
@@ -97,7 +97,7 @@ class DataWritersTest {
     void dataRecorderTracksSamplesAndEvents() {
         DataRecorder recorder = new DataRecorder();
         recorder.recordSample(new TimeSeriesSample(1L, 0.0, 0, 0, 0, 0, 0, 0));
-        recorder.recordEvent(new EventRecord(0.0, "ARRIVAL", 1, "x"));
+        recorder.recordEvent(new EventRecord(1L, 0.0, "ARRIVAL", 1, "x"));
 
         assertEquals(1, recorder.getSampleCount());
         assertEquals(1, recorder.getEventCount());

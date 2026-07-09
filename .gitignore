@@ -41,3 +41,6 @@ out/
 *.iml
 *.ipr
 *.iws
+## Simulation output
+results/
+documents/CS4632_Amaravadi_Sankalp_M3.md

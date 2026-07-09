@@ -15,15 +15,15 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - **UI Wireframes**: Design sketches for user interface components
 - **UI Implementation**: Complete graphical user interface for simulation visualization
 - **Experience-Based Service Times**: Enhanced modeling of technician skill progression affecting service duration
+- **Data Collection**: Per-run time-series/event CSV and summary/config JSON, plus a master index
+- **Comprehensive Testing**: JUnit suite covering engine, models, stochastic, inventory, metrics, config, data, and UI
 
 ### What's Still to Come
-- **Comprehensive Testing**: Full test suite for all simulation features
-- **Reports**: Build the logic for the to send the information to a pdf
-- **Real-World Validation**: Testing with actual automotive service department metrics and performance data
+- **Real-World Validation**: Testing with actual automotive service department metrics and performance data (Milestone 4)
 
 ### Milestone Progress
 - **Milestone 2 (Initial Implementation)**: Core components created and connected, console output functional, basic documentation complete
-- **Milestone 3 (Complete Implementation and Testing)**: UI development, advanced features, and comprehensive testing
+- **Milestone 3 (Complete Implementation and Testing)**: UI, data collection, and comprehensive testing complete
 - **Milestone 4 (Analysis and Validation)**: N/A
 
 ## Installation Instructions
@@ -81,6 +81,7 @@ A graphical user interface is still in development. Until the UI is complete, th
   - "--technicians=<count>" for technician and bay count
   - "--advisors=<count>" for service advisor count
   - "--seed=<value>" for a repeatable random seed
+  - "--output=<dir>" to set the results output directory (default: results)
   - "--help" to list all available options
 - Example: "java -cp target/classes simulator.Main --horizon=10 --arrival-rate=4 --technicians=3"
 

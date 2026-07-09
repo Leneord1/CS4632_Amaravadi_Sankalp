@@ -400,7 +400,8 @@ public class SimulationEngine {
             return;
         }
         int ticketId = ticket == null ? -1 : ticket.getTicketId();
-        recorder.recordEvent(new EventRecord(time, type, ticketId, detail));
+        recorder.recordEvent(
+                new EventRecord(System.currentTimeMillis(), time, type, ticketId, detail));
     }
 
     private int partsOnHand() {

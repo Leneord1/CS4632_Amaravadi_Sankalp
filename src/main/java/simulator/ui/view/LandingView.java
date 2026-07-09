@@ -50,10 +50,8 @@ public class LandingView implements View {
         VBox.setVgrow(topSpacer, Priority.ALWAYS);
         VBox.setVgrow(bottomSpacer, Priority.ALWAYS);
 
-        Label footer = new Label("CS 4632 W01 - Sankalp Amaravadi");
-        footer.getStyleClass().add("app-footer");
 
-        VBox layout = new VBox(20, topSpacer, title, subtitle, actions, bottomSpacer, footer);
+        VBox layout = new VBox(20, topSpacer, title, subtitle, actions, bottomSpacer);
         layout.setAlignment(Pos.CENTER);
         layout.getStyleClass().addAll("app-root", "landing-root");
         return layout;

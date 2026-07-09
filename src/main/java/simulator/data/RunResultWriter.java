@@ -124,6 +124,7 @@ public final class RunResultWriter {
                 .put("technicianCount", config.getTechnicianCount())
                 .put("serviceRatePerTechnician", config.getServiceRatePerTechnician())
                 .put("advisorCount", config.getAdvisorCount())
+                .put("customerCount", config.getCustomerCount())
                 .put("experienceAlpha", config.getExperienceAlpha())
                 .put("maxExperienceLevel", config.getMaxExperienceLevel())
                 .put("gammaShapeParameter", config.getGammaShapeParameter())

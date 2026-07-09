@@ -56,6 +56,7 @@ public final class SimulationConfigLoader {
                 "  --validation-tolerance=<ratio>   Analytical validation tolerance",
                 "  --replications=<count>           Number of simulation replications",
                 "  --seed=<value>                   Random seed",
+                "  --output=<dir>                   Results output directory (default: results)",
                 "  --help                           Show this message");
     }
 
