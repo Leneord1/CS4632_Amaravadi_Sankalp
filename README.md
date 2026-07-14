@@ -19,13 +19,18 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - **Comprehensive Testing**: JUnit suite covering engine, models, stochastic, inventory, metrics, config, data, and UI
 
 ### What's Still to Come
-- **Real-World Validation**: Testing with actual automotive service department metrics and performance data (Milestone 4)
+- **M4 report PDF**: Write `CS4632_Sankalp_Amaravadi_M4.pdf` from analysis artifacts in `documents/m4/`
 
 ### Milestone Progress
 - **Milestone 2 (Initial Implementation)**: Core components created and connected, console output functional, basic documentation complete
 - **Milestone 3 (Complete Implementation and Testing)**: UI, data collection, and comprehensive testing complete
-- **Milestone 4 (Analysis and Validation)**: N/A
+- **Milestone 4 (Analysis and Validation)**: Batch replications, sensitivity/scenario sweeps, validation evidence, and statistical tables complete (`documents/m4/`). Report PDF still pending.
 
+### M4 experiment runner
+```bash
+mvn -q -DskipTests compile exec:java "-Dexec.mainClass=simulator.analysis.M4ExperimentRunner" "-Dexec.args=--replications=30 --output=results/m4" "-Djava.util.logging.config.file=logging-m4.properties"
+```
+Headless CLI (no prompts): `mvn -q exec:java "-Dexec.mainClass=simulator.Main" "-Dexec.args=--no-prompt --replications=30 --output=results/batch"`
 ## Installation Instructions
 - 1. Open preferred Command-Line Interface (CLI)
 1. Enter "java -version" and verify that the version installed is newer then JDK 17
