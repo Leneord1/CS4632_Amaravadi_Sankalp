@@ -18,13 +18,10 @@ This project is a discrete event simulation (DES) of an automotive dealership se
 - **Data Collection**: Per-run time-series/event CSV and summary/config JSON, plus a master index
 - **Comprehensive Testing**: JUnit suite covering engine, models, stochastic, inventory, metrics, config, data, and UI
 
-### What's Still to Come
-- **M4 report PDF**: Write `CS4632_Sankalp_Amaravadi_M4.pdf` from analysis artifacts in `documents/m4/`
-
 ### Milestone Progress
 - **Milestone 2 (Initial Implementation)**: Core components created and connected, console output functional, basic documentation complete
 - **Milestone 3 (Complete Implementation and Testing)**: UI, data collection, and comprehensive testing complete
-- **Milestone 4 (Analysis and Validation)**: Batch replications, sensitivity/scenario sweeps, validation evidence, and statistical tables complete (`documents/m4/`). Report PDF still pending.
+- **Milestone 4 (Analysis and Validation)**: Complete — batch replications, sensitivity/scenario sweeps, validation evidence, statistical tables (`documents/m4/`), and report `documents/CS4632_Sankalp_Amaravadi_M4.pdf`
 
 ### M4 experiment runner
 ```bash
