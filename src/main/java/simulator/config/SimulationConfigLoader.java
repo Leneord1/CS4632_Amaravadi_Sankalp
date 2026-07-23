@@ -57,6 +57,7 @@ public final class SimulationConfigLoader {
                 "  --replications=<count>           Number of simulation replications",
                 "  --seed=<value>                   Random seed",
                 "  --output=<dir>                   Results output directory (default: results)",
+                "  --no-prompt                      Skip interactive technician/advisor/customer prompts",
                 "  --help                           Show this message");
     }
 
@@ -168,6 +169,8 @@ public final class SimulationConfigLoader {
         for (String arg : args) {
             if (!arg.startsWith("--")
                     || arg.equals("--help")
+                    || arg.equals("--no-prompt")
+                    || arg.equals("--write-per-run")
                     || arg.startsWith(CONFIG_ARG_PREFIX)) {
                 continue;
             }

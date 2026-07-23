@@ -1,0 +1,5 @@
+check,metric,value,pass_heuristic,notes
+face_peak_wait_gt_baseline,wait_hours,0.692663,true,peak vs baseline
+face_ideal_wait_lt_baseline,wait_hours,0.356318,true,ideal vs baseline
+extreme_low_arrival_util_near_zero,shop_tech_util,0.023526,true,expect util << baseline
+extreme_overload_wait_grows,wait_hours,5.997555,true,expect large waits

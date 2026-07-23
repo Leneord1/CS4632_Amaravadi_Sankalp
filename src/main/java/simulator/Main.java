@@ -5,10 +5,12 @@ import simulator.config.SimulationConfigLoader;
 import simulator.data.DataRecorder;
 import simulator.data.RunResultWriter;
 import simulator.metrics.MetricsReport;
+import simulator.analysis.BatchRunner;
+import simulator.analysis.ReplicationResult;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Scanner;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +23,9 @@ public class Main {
         try {
             SimulationConfig config = SimulationConfigLoader.load(args);
             Path outputDir = Path.of(readOption(args, OUTPUT_PREFIX, DEFAULT_OUTPUT_DIR));
-            config = promptForSettings(config);
+            if (!hasFlag(args, "--no-prompt")) {
+                config = promptForSettings(config);
+            }
             run(config, outputDir);
         } catch (IllegalArgumentException exception) {
             if (exception.getMessage() != null && exception.getMessage().contains("Usage:")) {
@@ -35,9 +39,8 @@ public class Main {
     }
 
     private static SimulationConfig promptForSettings(SimulationConfig config) {
-        //  Prompt the user for the number of technicians, advisors, and customers,
-        //  using the current config values as defaults
-        Scanner userInput = new Scanner(System.in);
+        // Prompt the user for technicians, advisors, and customers.
+        java.util.Scanner userInput = new java.util.Scanner(System.in);
         int technicianCount = readInt(userInput, "Number of technicians", 1);
         int advisorCount = readInt(userInput, "Number of advisors", 1);
         int customerCount = readInt(userInput, "Number of customers", 0);
@@ -48,8 +51,7 @@ public class Main {
                 .build();
     }
 
-    private static int readInt(Scanner scanner, String label, int minValue) {
-        //  Prompt the user for an integer value with the given label and minimum value.
+    private static int readInt(java.util.Scanner scanner, String label, int minValue) {
         while (true) {
             LOGGER.info(() -> String.format("%s [%d]: ", label, minValue));
             if (!scanner.hasNextLine()) {
@@ -72,23 +74,41 @@ public class Main {
     }
 
     static void run(SimulationConfig config, Path outputDir) throws IOException {
-        //  Run a single simulation, log results, and export its data files
+        // Run one or more replications (seed + i) and export data files.
         if (LOGGER.isLoggable(Level.INFO)) {
             LOGGER.info("Service Department Operational Optimization Simulator");
             LOGGER.info(formatConfig(config));
         }
 
-        DataRecorder recorder = new DataRecorder();
-        long startNanos = System.nanoTime();
-        SimulationEngine engine = new SimulationEngine(config, recorder);
-        engine.run();
-        long wallClockMillis = (System.nanoTime() - startNanos) / 1_000_000L;
+        int replications = Math.max(1, config.getReplicationCount());
+        if (replications == 1) {
+            DataRecorder recorder = new DataRecorder();
+            long startNanos = System.nanoTime();
+            SimulationEngine engine = new SimulationEngine(config, recorder);
+            engine.run();
+            long wallClockMillis = (System.nanoTime() - startNanos) / 1_000_000L;
+            MetricsReport report = engine.getMetrics().buildReport();
+            RunResultWriter writer = RunResultWriter.createSession(outputDir);
+            writer.writeRun(1, "CLI single run", "interactive", wallClockMillis, config, report, recorder);
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.info("Results written to " + writer.getSessionDir());
+            }
+            return;
+        }
 
-        MetricsReport report = engine.getMetrics().buildReport();
-        RunResultWriter writer = RunResultWriter.createSession(outputDir);
-        writer.writeRun(1, "CLI single run", "interactive", wallClockMillis, config, report, recorder);
+        List<ReplicationResult> results =
+                BatchRunner.runReplications(
+                        config,
+                        replications,
+                        "cli_batch",
+                        "replications=" + replications,
+                        outputDir,
+                        true);
+        BatchRunner.writeReplicationCsv(outputDir.resolve("aggregate_replications.csv"), results);
+        BatchRunner.writeStatsCsv(
+                outputDir.resolve("aggregate_stats.csv"), "cli_batch", BatchRunner.aggregate(results));
         if (LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("Results written to " + writer.getSessionDir());
+            LOGGER.info("Batch results written under " + outputDir.toAbsolutePath());
         }
     }
 
@@ -101,8 +121,16 @@ public class Main {
         return defaultValue;
     }
 
+    private static boolean hasFlag(String[] args, String flag) {
+        for (String arg : args) {
+            if (flag.equals(arg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static String formatConfig(SimulationConfig config) {
-        //  Format the simulation configuration as a string for logging
         return String.format(
                 "Config horizon=%.1fh lambda=%.2f c=%d mu=%.2f advisors=%d alpha=%.2f k=%.1f"
                         + " reorder(r=%d,Q=%d,L=%.1fh) tolerance=%.2f replications=%d seed=%d model=%s",

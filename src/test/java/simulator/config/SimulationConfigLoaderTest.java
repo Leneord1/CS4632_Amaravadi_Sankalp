@@ -37,6 +37,15 @@ class SimulationConfigLoaderTest {
     }
 
     @Test
+    void booleanFlagsDoNotBreakOptionParsing() {
+        SimulationConfig config =
+                SimulationConfigLoader.load(
+                        new String[] {"--no-prompt", "--replications=5", "--horizon=3"});
+        assertEquals(5, config.getReplicationCount());
+        assertEquals(3.0, config.getSimulationHorizonHours(), 1e-9);
+    }
+
+    @Test
     void meanServiceTimeUsesMu() {
         SimulationConfig config = SimulationConfig.builder().serviceRatePerTechnician(2.0).build();
         assertEquals(0.5, config.getMeanServiceTimeHours(), 1e-9);
