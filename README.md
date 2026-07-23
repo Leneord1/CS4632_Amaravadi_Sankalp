@@ -3,7 +3,6 @@
 ## Sankalp Amaravadi
 CS 4632 W01 Summer 2026
 
-**GitHub:** https://github.com/Leneord1/CS4632_Amaravadi_Sankalp
 
 ## Project Description
 Discrete-event simulation (DES) of an automotive dealership service department. The model couples customer arrivals, advisor intake, technician and bay assignment, a shared FIFO job queue, and parts inventory. Arrivals use a non-stationary Cox process; service times use experience-scaled Gamma draws; parts use reorder-point inventory with stochastic lead time. Metrics support staffing and inventory decisions before changing live shop workflow.
